@@ -1,7 +1,9 @@
+const CACHE_BUSTER = "20260401b";
+
 async function loadSiteData() {
     const [postsResponse, categoriesResponse] = await Promise.all([
-        fetch("content/posts.json"),
-        fetch("content/categories.json")
+        fetch(`content/posts.json?v=${CACHE_BUSTER}`),
+        fetch(`content/categories.json?v=${CACHE_BUSTER}`)
     ]);
     if (!postsResponse.ok) throw new Error("无法读取文章索引");
     if (!categoriesResponse.ok) throw new Error("无法读取分类索引");
