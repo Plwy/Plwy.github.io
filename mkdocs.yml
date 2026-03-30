@@ -1,0 +1,59 @@
+site_name: Plwy's Tech Notes
+site_description: 技术笔记与学习记录
+site_author: Plwy
+site_url: https://Plwy.github.io/
+
+theme:
+  name: material
+  language: zh
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.annotation
+    - content.code.copy
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+
+plugins:
+  - search
+  - tags
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Plwy
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+  - pymdownx.tabbed
+  - toc:
+      permalink: true
+
+nav:
+  - 首页: index.md
+  - 技术笔记:
+    - 深度学习部署:
+      - TensorRT 简介: notes/tensorrt-intro.md
+      - 量化技术: notes/quantization.md
+      - 模型剪枝: notes/network-pruning.md
+      - 知识蒸馏: notes/knowledge-distillation.md
+  - 标签: tags.md
