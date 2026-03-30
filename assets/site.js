@@ -167,20 +167,17 @@ function renderCategory(posts, categories) {
     const slug = getQueryParam("slug");
     const categoryPosts = posts.filter((post) => post.category.slug === slug);
     const title = document.getElementById("category-title");
-    const desc = document.getElementById("category-description");
     const breadcrumb = document.getElementById("category-breadcrumb");
     const list = document.getElementById("category-posts");
     const category = categories.find((item) => item.slug === slug);
 
     if (!category) {
         title.textContent = "未找到这个分类";
-        desc.textContent = "可以返回首页重新选择分类。";
         list.innerHTML = '<div class="empty-state">这个分类暂时没有文章。</div>';
         return;
     }
 
     title.textContent = category.name;
-    desc.textContent = category.description;
     breadcrumb.textContent = category.name;
     document.title = `${category.name} | 侧耳倾听`;
     list.innerHTML = categoryPosts.length ? renderPostList(categoryPosts) : '<div class="empty-state">这个分类暂时没有文章。</div>';
