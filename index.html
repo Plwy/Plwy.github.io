@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>侧耳倾听 | 技术博客</title>
+    <link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-page="home">
+    <header class="site-header">
+        <nav>
+            <div class="nav-container">
+                <a href="index.html" class="logo"><span class="logo-text">侧耳倾听</span><span class="logo-clover">☘</span></a>
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#categories">Categories</a></li>
+                    <li><a href="#posts">Posts</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <p class="hero-kicker">Personal Knowledge Garden</p>
+            <h1>Stories begin here...</h1>
+            <p class="hero-subtitle">保留现在这套风格，把分类与文章从首页里拆出来，并让正文从 Markdown 文件读取。</p>
+            <a class="hero-link" href="#categories">从分类开始看</a>
+        </div>
+    </section>
+
+    <section class="container" id="categories">
+        <div class="section-title">
+            <h2>文章分类</h2>
+            <p>点击类别卡片进入对应文章列表</p>
+        </div>
+        <div class="categories-grid" id="category-grid"></div>
+    </section>
+
+    <section class="container section-soft" id="posts">
+        <div class="section-title">
+            <h2>最新文章</h2>
+            <p>点击文章卡片进入详情页，正文内容来自 Markdown 文件</p>
+        </div>
+        <div class="posts-grid" id="latest-posts"></div>
+    </section>
+
+    <section class="container" id="about">
+        <div class="section-title">
+            <h2>关于</h2>
+            <p>保留当前的格式和样式，只调整内容组织方式</p>
+        </div>
+        <div class="about-card">
+            <h3>侧耳倾听</h3>
+            <p>首页继续承担展示入口的角色，但类别列表和文章正文不再写死在一个 HTML 页面里。后面新增文章时，只需要往 Markdown 目录下补文件并更新文章索引即可。</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 侧耳倾听. 用静下来的方式整理技术笔记。</p>
+    </footer>
+
+    <script src="assets/site.js"></script>
+</body>
+</html>

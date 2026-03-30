@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章详情 | 侧耳倾听</title>
+    <link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-page="article">
+    <header class="site-header">
+        <nav>
+            <div class="nav-container">
+                <a href="index.html" class="logo"><span class="logo-text">侧耳倾听</span><span class="logo-clover">☘</span></a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#categories">Categories</a></li>
+                    <li><a href="index.html#posts">Posts</a></li>
+                    <li><a href="index.html#about">About</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container article-page">
+        <article class="article">
+            <div class="article-header">
+                <p class="breadcrumb"><a href="index.html">Home</a> / <a id="article-category-link" href="index.html#categories">分类</a> / <span id="article-title-breadcrumb">文章</span></p>
+                <h1 id="article-title">文章加载中...</h1>
+                <div class="post-meta" id="article-meta"></div>
+            </div>
+            <div class="article-body" id="article-body">
+                <p>正在读取 Markdown 正文...</p>
+            </div>
+        </article>
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3>文章信息</h3>
+                <ul class="sidebar-list" id="article-info"></ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>继续阅读</h3>
+                <ul class="sidebar-list" id="related-posts"></ul>
+            </div>
+        </aside>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 侧耳倾听</p>
+    </footer>
+
+    <script src="assets/site.js"></script>
+</body>
+</html>
