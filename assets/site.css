@@ -315,6 +315,23 @@ a { color: inherit; }
     font-weight: 700;
 }
 
+.about-page-text {
+    max-width: 760px;
+    margin: 0 auto;
+    color: #555;
+    line-height: 1.9;
+}
+
+.about-page-text p {
+    margin-bottom: 14px;
+}
+
+.about-page-text a {
+    color: #5a7c6f;
+    text-decoration: none;
+    font-weight: 700;
+}
+
 .article-page {
     padding-top: 120px;
     display: grid;
