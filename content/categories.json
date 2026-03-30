@@ -1,0 +1,15 @@
+[
+  { "slug": "paper", "name": "论文", "description": "基础模型 Transformer 和不同领域论文的阅读笔记。", "icon": "📄" },
+  { "slug": "algorithm", "name": "算法", "description": "YOLO 工程、语音项目、数据集和训练问题相关记录。", "icon": "🧠" },
+  { "slug": "deploy", "name": "模型部署", "description": "RKNN、TVM、NCNN、TensorRT 以及模型优化、转化和硬件分析。", "icon": "🚀" },
+  { "slug": "llm", "name": "大模型", "description": "RAG、CLIP 等大模型相关技术与落地笔记。", "icon": "🪄" },
+  { "slug": "robot", "name": "机器人", "description": "机器人算法、感知控制与硬件相关记录。", "icon": "🤖" },
+  { "slug": "cpp", "name": "C++", "description": "语法、CMake、编译问题与工程实践。", "icon": "C++" },
+  { "slug": "python", "name": "Python", "description": "PyCharm、PyQt 与常用 Python 工具链笔记。", "icon": "Py" },
+  { "slug": "dev-env", "name": "开发环境", "description": "Docker、Git、操作系统和开发环境安装配置。", "icon": "🛠" },
+  { "slug": "software-engineering", "name": "软件工程", "description": "负载均衡、异步编程与服务稳定性相关内容。", "icon": "⚙" },
+  { "slug": "tools", "name": "其他工具", "description": "X-AnyLabeling 等效率工具使用记录。", "icon": "🧰" },
+  { "slug": "misc", "name": "其他", "description": "3D、摄影技术、钢琴选购等兴趣向记录。", "icon": "◇" },
+  { "slug": "invest", "name": "投资", "description": "投资学习和复盘相关笔记。", "icon": "📈" },
+  { "slug": "daily", "name": "日常", "description": "生活与感想的长期记录。", "icon": "☼" }
+]

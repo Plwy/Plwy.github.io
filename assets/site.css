@@ -143,6 +143,11 @@ a { color: inherit; }
     font-weight: 700;
 }
 
+.hero-link-dark {
+    color: #5a7c6f;
+    border-bottom-color: rgba(90, 124, 111, 0.45);
+}
+
 .container {
     max-width: 1100px;
     margin: 0 auto;
@@ -194,6 +199,7 @@ a { color: inherit; }
 .category-card,
 .post-card,
 .about-card,
+.about-page-card,
 .article,
 .sidebar-section {
     background: white;
@@ -214,6 +220,21 @@ a { color: inherit; }
 .post-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.post-list {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.post-list .post-card {
+    min-height: unset;
+    margin-bottom: 18px;
+    border-left: 4px solid #a8d5ba;
+}
+
+.post-list .post-card:hover {
+    transform: translateX(5px);
 }
 
 .category-icon {
@@ -269,6 +290,29 @@ a { color: inherit; }
     margin: 0 auto;
     padding: 46px;
     text-align: center;
+}
+
+.about-page-card {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px;
+}
+
+.about-page-card h3 {
+    font-size: 1.6rem;
+    margin-bottom: 18px;
+    color: #5a7c6f;
+}
+
+.about-page-card p {
+    margin-bottom: 14px;
+    color: #555;
+}
+
+.about-page-card a {
+    color: #5a7c6f;
+    text-decoration: none;
+    font-weight: 700;
 }
 
 .article-page {

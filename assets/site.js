@@ -1,7 +1,14 @@
-async function loadPostIndex() {
-    const response = await fetch("content/posts.json");
-    if (!response.ok) throw new Error("无法读取文章索引");
-    return response.json();
+async function loadSiteData() {
+    const [postsResponse, categoriesResponse] = await Promise.all([
+        fetch("content/posts.json"),
+        fetch("content/categories.json")
+    ]);
+    if (!postsResponse.ok) throw new Error("无法读取文章索引");
+    if (!categoriesResponse.ok) throw new Error("无法读取分类索引");
+    return {
+        posts: await postsResponse.json(),
+        categories: await categoriesResponse.json()
+    };
 }
 
 function getQueryParam(name) {
@@ -113,26 +120,36 @@ function renderTags(tags) {
     return `<div class="tag-list">${tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}</div>`;
 }
 
-function buildCategorySummary(posts) {
+function buildCategorySummary(posts, categories) {
     const summary = {};
+    for (const category of categories) {
+        summary[category.slug] = { ...category, count: 0 };
+    }
     for (const post of posts) {
-        if (!summary[post.category.slug]) {
-            summary[post.category.slug] = {
-                ...post.category,
-                count: 0
-            };
+        if (summary[post.category.slug]) {
+            summary[post.category.slug].count += 1;
         }
-        summary[post.category.slug].count += 1;
     }
     return Object.values(summary);
 }
 
-function renderHome(posts) {
+function renderPostList(posts) {
+    return posts.map((post) => `
+        <a class="post-card" href="article.html?slug=${post.slug}">
+            <div class="card-meta">${post.date} · ${post.category.name}</div>
+            <h3>${post.title}</h3>
+            <p>${post.excerpt}</p>
+            ${renderTags(post.tags)}
+        </a>
+    `).join("");
+}
+
+function renderHome(posts, categories) {
     const categoryGrid = document.getElementById("category-grid");
     const latestPosts = document.getElementById("latest-posts");
-    const categories = buildCategorySummary(posts);
+    const categorySummary = buildCategorySummary(posts, categories);
 
-    categoryGrid.innerHTML = categories.map((category) => `
+    categoryGrid.innerHTML = categorySummary.map((category) => `
         <a class="category-card" href="category.html?slug=${category.slug}">
             <div class="category-icon">${category.icon || "·"}</div>
             <h3>${category.name}</h3>
@@ -141,45 +158,30 @@ function renderHome(posts) {
         </a>
     `).join("");
 
-    latestPosts.innerHTML = posts.slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6).map((post) => `
-        <a class="post-card" href="article.html?slug=${post.slug}">
-            <div class="card-meta">${post.date} · ${post.category.name}</div>
-            <h3>${post.title}</h3>
-            <p>${post.excerpt}</p>
-            ${renderTags(post.tags)}
-        </a>
-    `).join("");
+    latestPosts.innerHTML = renderPostList(posts.slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8));
 }
 
-function renderCategory(posts) {
+function renderCategory(posts, categories) {
     const slug = getQueryParam("slug");
     const categoryPosts = posts.filter((post) => post.category.slug === slug);
     const title = document.getElementById("category-title");
     const desc = document.getElementById("category-description");
     const breadcrumb = document.getElementById("category-breadcrumb");
     const list = document.getElementById("category-posts");
+    const category = categories.find((item) => item.slug === slug);
 
-    if (!categoryPosts.length) {
+    if (!category) {
         title.textContent = "未找到这个分类";
         desc.textContent = "可以返回首页重新选择分类。";
         list.innerHTML = '<div class="empty-state">这个分类暂时没有文章。</div>';
         return;
     }
 
-    const category = categoryPosts[0].category;
     title.textContent = category.name;
     desc.textContent = category.description;
     breadcrumb.textContent = category.name;
     document.title = `${category.name} | 侧耳倾听`;
-
-    list.innerHTML = categoryPosts.map((post) => `
-        <a class="post-card" href="article.html?slug=${post.slug}">
-            <div class="card-meta">${post.date} · ${post.category.name}</div>
-            <h3>${post.title}</h3>
-            <p>${post.excerpt}</p>
-            ${renderTags(post.tags)}
-        </a>
-    `).join("");
+    list.innerHTML = categoryPosts.length ? renderPostList(categoryPosts) : '<div class="empty-state">这个分类暂时没有文章。</div>';
 }
 
 async function renderArticle(posts) {
@@ -226,11 +228,11 @@ async function renderArticle(posts) {
 
 async function init() {
     try {
-        const posts = await loadPostIndex();
+        const { posts, categories } = await loadSiteData();
         const page = document.body.dataset.page;
 
-        if (page === "home") renderHome(posts);
-        if (page === "category") renderCategory(posts);
+        if (page === "home") renderHome(posts, categories);
+        if (page === "category") renderCategory(posts, categories);
         if (page === "article") await renderArticle(posts);
     } catch (error) {
         const fallback = document.createElement("div");

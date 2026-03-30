@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文章详情 | 侧耳倾听</title>
+    <title>About | 侧耳倾听</title>
     <link rel="stylesheet" href="assets/site.css">
 </head>
-<body data-page="article">
+<body>
     <header class="site-header">
         <nav>
             <div class="nav-container">
@@ -21,33 +21,22 @@
         </nav>
     </header>
 
-    <main class="container article-page">
-        <article class="article">
-            <div class="article-header">
-                <p class="breadcrumb"><a href="index.html">Home</a> / <a id="article-category-link" href="index.html#categories">分类</a> / <span id="article-title-breadcrumb">文章</span></p>
-                <h1 id="article-title">文章加载中...</h1>
-                <div class="post-meta" id="article-meta"></div>
-            </div>
-            <div class="article-body" id="article-body">
-                <p>正在读取 Markdown 正文...</p>
-            </div>
-        </article>
-        <aside class="sidebar">
-            <div class="sidebar-section">
-                <h3>文章信息</h3>
-                <ul class="sidebar-list" id="article-info"></ul>
-            </div>
-            <div class="sidebar-section">
-                <h3>继续阅读</h3>
-                <ul class="sidebar-list" id="related-posts"></ul>
-            </div>
-        </aside>
+    <main class="container subpage-container">
+        <div class="section-title section-title-left">
+            <p class="breadcrumb"><a href="index.html">Home</a> / About</p>
+            <h2>关于</h2>
+            <p>这个页面单独放站点说明与个人信息。</p>
+        </div>
+        <div class="about-page-card">
+            <h3>侧耳倾听</h3>
+            <p>🔗 GitHub: <a href="https://github.com/Plwy" target="_blank" rel="noreferrer">Plwy</a></p>
+            <p>🏷️ 技术栈: Python, C++, DL, LLM</p>
+            <p>这里会持续整理论文笔记、工程踩坑、部署经验和一些生活记录，让内容能按分类和文章详情慢慢长起来。</p>
+        </div>
     </main>
 
     <footer>
         <p>&copy; 2026 侧耳倾听</p>
     </footer>
-
-    <script src="assets/site.js"></script>
 </body>
 </html>
