@@ -1,0 +1,11 @@
+[
+  {
+    "slug": "sample-article",
+    "title": "示例文章",
+    "date": "2026-04-01",
+    "excerpt": "这是一个用于说明目录结构和元数据写法的示例文章。",
+    "tags": ["示例", "模板"],
+    "markdown": "articles/paper/sample-article.md",
+    "category": { "slug": "paper", "name": "论文" }
+  }
+]

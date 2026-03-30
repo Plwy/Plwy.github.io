@@ -1,0 +1,58 @@
+name: Sync Articles
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout site repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate config
+        env:
+          ARTICLES_REPO: ${{ vars.ARTICLES_REPO }}
+          ARTICLES_BRANCH: ${{ vars.ARTICLES_BRANCH }}
+        run: |
+          if [ -z "$ARTICLES_REPO" ]; then
+            echo "Please set repo variable ARTICLES_REPO, for example: Plwy/plwy-articles"
+            exit 1
+          fi
+          echo "Using article repo: $ARTICLES_REPO"
+          echo "Using branch: ${ARTICLES_BRANCH:-main}"
+
+      - name: Clone article repo
+        env:
+          ARTICLES_REPO: ${{ vars.ARTICLES_REPO }}
+          ARTICLES_BRANCH: ${{ vars.ARTICLES_BRANCH }}
+        run: |
+          git clone --depth 1 --branch "${ARTICLES_BRANCH:-main}" "https://github.com/${ARTICLES_REPO}.git" _articles_repo
+
+      - name: Sync article content
+        run: |
+          python scripts/sync_articles.py --source _articles_repo --dest content
+
+      - name: Commit and push if content changed
+        run: |
+          if git diff --quiet -- content; then
+            echo "No article changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content
+          git commit -m "Sync articles from external repository"
+          git push
