@@ -65,6 +65,15 @@ a { color: inherit; }
     padding: 8px 12px;
     border-radius: 999px;
     font-weight: 900;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.nav-icon {
+    color: #5a7c6f;
+    font-size: 0.95rem;
+    line-height: 1;
 }
 
 .nav-links a:hover {
@@ -78,7 +87,11 @@ a { color: inherit; }
     align-items: center;
     justify-content: center;
     text-align: center;
-    background: linear-gradient(rgba(44, 62, 57, 0.34), rgba(44, 62, 57, 0.48)), url("../images/hero-bg.jpg") center/cover fixed;
+    background-color: #51675f;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
     color: white;
     position: relative;
     padding: 120px 24px 80px;
