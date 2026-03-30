@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plwy's Tech Notes</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; background: #fafafa; }
+        header { text-align: center; padding: 40px 0; border-bottom: 1px solid #eee; margin-bottom: 40px; }
+        h1 { font-size: 2.5em; margin-bottom: 10px; color: #222; }
+        .subtitle { color: #666; font-size: 1.1em; }
+        .post { background: white; padding: 25px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .post-title { font-size: 1.4em; margin-bottom: 10px; }
+        .post-title a { color: #222; text-decoration: none; }
+        .post-title a:hover { color: #0366d6; }
+        .post-meta { color: #666; font-size: 0.9em; margin-bottom: 15px; }
+        .tags { margin-top: 10px; }
+        .tag { display: inline-block; background: #f0f0f0; padding: 3px 10px; border-radius: 15px; font-size: 0.85em; margin-right: 8px; color: #555; }
+        .post-excerpt { color: #444; }
+        footer { text-align: center; padding: 40px 0; color: #666; border-top: 1px solid #eee; margin-top: 40px; }
+        a.github { color: #0366d6; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Plwy's Tech Notes</h1>
+        <p class="subtitle">技术笔记与学习记录</p>
+    </header>
+
+    <main>
+        <article class="post">
+            <h2 class="post-title"><a href="#">TensorRT 简介</a></h2>
+            <div class="post-meta">2026-03-30</div>
+            <p class="post-excerpt">TensorRT 是一个前向推理框架。在推理过程中，基于 TensorRT 的应用程序的执行速度可以比 CPU 平台速度快 40 倍。</p>
+            <div class="tags"><span class="tag">DL_Deploy</span><span class="tag">TensorRT</span><span class="tag">NVIDIA</span></div>
+        </article>
+
+        <article class="post">
+            <h2 class="post-title"><a href="#">量化技术详解</a></h2>
+            <div class="post-meta">2026-03-29</div>
+            <p class="post-excerpt">量化，也被称为定点化、离散化，是指用低精度整数来近似表示浮点数（权重和偏置）的方法。</p>
+            <div class="tags"><span class="tag">DL_Deploy</span><span class="tag">量化</span><span class="tag">模型压缩</span></div>
+        </article>
+
+        <article class="post">
+            <h2 class="post-title"><a href="#">模型剪枝笔记</a></h2>
+            <div class="post-meta">2026-03-28</div>
+            <p class="post-excerpt">模型剪枝是一种通过移除神经网络中不重要的连接或神经元来减小模型体积和加速推理的技术。</p>
+            <div class="tags"><span class="tag">DL_Deploy</span><span class="tag">模型压缩</span><span class="tag">剪枝</span></div>
+        </article>
+
+        <article class="post">
+            <h2 class="post-title"><a href="#">知识蒸馏</a></h2>
+            <div class="post-meta">2026-03-27</div>
+            <p class="post-excerpt">知识蒸馏通过采用预先训练好的教师模型的输出作为监督信号去训练另外一个轻量化的网络。</p>
+            <div class="tags"><span class="tag">DL_Deploy</span><span class="tag">知识蒸馏</span><span class="tag">模型压缩</span></div>
+        </article>
+    </main>
+
+    <footer>
+        <p>Powered by <a href="https://github.com/Plwy" class="github">Plwy</a> on GitHub</p>
+    </footer>
+</body>
+</html>
