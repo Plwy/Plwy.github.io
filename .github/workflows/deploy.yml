@@ -1,28 +1,10 @@
-name: Deploy to GitHub Pages
+name: Legacy Deploy Disabled
 
 on:
-  push:
-    branches:
-      - main
-      - master
+  workflow_dispatch:
 
 jobs:
-  deploy:
+  noop:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Install dependencies
-        run: |
-          pip install mkdocs-material
-
-      - name: Build and deploy
-        run: |
-          mkdocs gh-deploy --force
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo "Legacy MkDocs deployment is disabled. The live site is maintained directly from branch content."
