@@ -38,9 +38,8 @@
 
         /* Posts */
         .posts-list { max-width: 800px; margin: 0 auto; }
-        .post-item { background: white; padding: 30px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: all 0.3s; border-left: 4px solid #a8d5ba; display: flex; gap: 20px; align-items: flex-start; }
+        .post-item { background: white; padding: 30px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: all 0.3s; border-left: 4px solid #a8d5ba; }
         .post-item:hover { transform: translateX(5px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left-color: #5a7c6f; }
-        .post-icon { font-size: 2.5em; min-width: 60px; text-align: center; padding-top: 5px; }
         .post-title { font-size: 1.4em; margin-bottom: 12px; color: #222; }
         .post-title a { color: inherit; text-decoration: none; transition: color 0.3s; }
         .post-title a:hover { color: #5a7c6f; }
@@ -85,8 +84,8 @@
 
         /* Categories Section */
         .categories-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-        .category-card { background: white; padding: 30px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.3s; }
-        .category-card:hover { transform: translateY(-5px); }
+        .category-card { background: white; padding: 30px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: all 0.3s; cursor: pointer; text-decoration: none; display: block; }
+        .category-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
         .category-card i { font-size: 2.5em; color: #5a7c6f; margin-bottom: 15px; }
         .category-card h3 { font-size: 1.1em; color: #333; }
         .category-card p { color: #888; font-size: 0.9em; margin-top: 5px; }
@@ -136,71 +135,71 @@
             <p>按主题浏览内容</p>
         </div>
         <div class="categories-grid">
-            <div class="category-card">
+            <a href="#posts" class="category-card">
                 <i class="fas fa-book"></i>
                 <h3>论文</h3>
                 <p>4 篇</p>
-            </div>
-            <div class="category-card">
+            </a>
+            <a href="#posts" class="category-card">
                 <i class="fas fa-code"></i>
                 <h3>算法</h3>
                 <p>3 篇</p>
-            </div>
-            <div class="category-card">
+            </a>
+            <a href="#posts" class="category-card">
                 <i class="fas fa-rocket"></i>
                 <h3>模型部署</h3>
                 <p>8 篇</p>
-            </div>
-            <div class="category-card">
+            </a>
+            <a href="#posts" class="category-card">
                 <i class="fas fa-brain"></i>
                 <h3>大模型</h3>
                 <p>2 篇</p>
-            </div>
-            <div class="category-card">
+            </a>
+            <a href="#posts" class="category-card">
                 <i class="fas fa-robot"></i>
                 <h3>机器人</h3>
                 <p>1 篇</p>
-            </div>
-            <div class="category-card">
+            </a>
+            <a href="#posts" class="category-card">
                 <i class="fab fa-cuttlefish"></i>
                 <h3>C++</h3>
                 <p>3 篇</p>
-            </div>
-            <div class="category-card">
+            </a>
+            <a href="#posts" class="category-card">
                 <i class="fab fa-python"></i>
                 <h3>Python</h3>
                 <p>5 篇</p>
-            </div>
-            <div class="category-card">
+            </a>
+            <a href="#posts" class="category-card">
                 <i class="fas fa-tools"></i>
                 <h3>开发环境</h3>
                 <p>2 篇</p>
-            </div>
-            <div class="category-card">
+            </a>
+            <a href="#posts" class="category-card">
                 <i class="fas fa-project-diagram"></i>
                 <h3>软件工程</h3>
                 <p>1 篇</p>
-            </div>
-            <div class="category-card">
+            </a>
+            <a href="#posts" class="category-card">
                 <i class="fas fa-wrench"></i>
                 <h3>其他工具</h3>
                 <p>1 篇</p>
-            </div>
-            <div class="category-card">
+            </a>
+            <a href="#posts" class="category-card">
                 <i class="fas fa-ellipsis-h"></i>
                 <h3>其他</h3>
                 <p>3 篇</p>
-            </div>
-            <div class="category-card">
+            </a>
+            <a href="#posts" class="category-card">
                 <i class="fas fa-chart-line"></i>
                 <h3>投资</h3>
                 <p>2 篇</p>
-            </div>
-            <div class="category-card">
+            </a>
+            <a href="#posts" class="category-card">
                 <i class="fas fa-heart"></i>
                 <h3>日常</h3>
                 <p>5 篇</p>
-            </div>
+            </a>
         </div>
     </section>
 
@@ -212,67 +211,55 @@
         </div>
         <div class="posts-list">
             <article class="post-item">
-                <div class="post-icon">🤖</div>
-                <div class="post-content-wrapper">
-                    <h2 class="post-title"><a href="#article1">TensorRT 简介</a></h2>
-                    <div class="post-meta">
-                        <i class="far fa-calendar"></i> 2026-03-30 &nbsp;
-                        <i class="fas fa-folder"></i> 模型部署
-                    </div>
-                    <p class="post-excerpt">TensorRT 是一个前向推理框架。在推理过程中，基于 TensorRT 的应用程序的执行速度可以比 CPU 平台速度快 40 倍。</p>
-                    <div class="post-tags">
-                        <span class="tag">DL_Deploy</span>
-                        <span class="tag">TensorRT</span>
-                        <span class="tag">NVIDIA</span>
-                    </div>
+                <h2 class="post-title"><a href="#article1">TensorRT 简介</a></h2>
+                <div class="post-meta">
+                    <i class="far fa-calendar"></i> 2026-03-30 &nbsp;
+                    <i class="fas fa-folder"></i> 模型部署
+                </div>
+                <p class="post-excerpt">TensorRT 是一个前向推理框架。在推理过程中，基于 TensorRT 的应用程序的执行速度可以比 CPU 平台速度快 40 倍。</p>
+                <div class="post-tags">
+                    <span class="tag">DL_Deploy</span>
+                    <span class="tag">TensorRT</span>
+                    <span class="tag">NVIDIA</span>
                 </div>
             </article>
             <article class="post-item">
-                <div class="post-icon">📦</div>
-                <div class="post-content-wrapper">
-                    <h2 class="post-title"><a href="#article2">量化技术详解</a></h2>
-                    <div class="post-meta">
-                        <i class="far fa-calendar"></i> 2026-03-29 &nbsp;
-                        <i class="fas fa-folder"></i> 模型部署
-                    </div>
-                    <p class="post-excerpt">量化，也被称为定点化、离散化，是指用低精度整数来近似表示浮点数（权重和偏置）的方法。</p>
-                    <div class="post-tags">
-                        <span class="tag">DL_Deploy</span>
-                        <span class="tag">量化</span>
-                        <span class="tag">模型压缩</span>
-                    </div>
+                <h2 class="post-title"><a href="#article2">量化技术详解</a></h2>
+                <div class="post-meta">
+                    <i class="far fa-calendar"></i> 2026-03-29 &nbsp;
+                    <i class="fas fa-folder"></i> 模型部署
+                </div>
+                <p class="post-excerpt">量化，也被称为定点化、离散化，是指用低精度整数来近似表示浮点数（权重和偏置）的方法。</p>
+                <div class="post-tags">
+                    <span class="tag">DL_Deploy</span>
+                    <span class="tag">量化</span>
+                    <span class="tag">模型压缩</span>
                 </div>
             </article>
             <article class="post-item">
-                <div class="post-icon">✂️</div>
-                <div class="post-content-wrapper">
-                    <h2 class="post-title"><a href="#article3">模型剪枝笔记</a></h2>
-                    <div class="post-meta">
-                        <i class="far fa-calendar"></i> 2026-03-28 &nbsp;
-                        <i class="fas fa-folder"></i> 模型部署
-                    </div>
-                    <p class="post-excerpt">模型剪枝是一种通过移除神经网络中不重要的连接或神经元来减小模型体积和加速推理的技术。</p>
-                    <div class="post-tags">
-                        <span class="tag">DL_Deploy</span>
-                        <span class="tag">剪枝</span>
-                        <span class="tag">模型压缩</span>
-                    </div>
+                <h2 class="post-title"><a href="#article3">模型剪枝笔记</a></h2>
+                <div class="post-meta">
+                    <i class="far fa-calendar"></i> 2026-03-28 &nbsp;
+                    <i class="fas fa-folder"></i> 模型部署
+                </div>
+                <p class="post-excerpt">模型剪枝是一种通过移除神经网络中不重要的连接或神经元来减小模型体积和加速推理的技术。</p>
+                <div class="post-tags">
+                    <span class="tag">DL_Deploy</span>
+                    <span class="tag">剪枝</span>
+                    <span class="tag">模型压缩</span>
                 </div>
             </article>
             <article class="post-item">
-                <div class="post-icon">🎓</div>
-                <div class="post-content-wrapper">
-                    <h2 class="post-title"><a href="#article4">知识蒸馏</a></h2>
-                    <div class="post-meta">
-                        <i class="far fa-calendar"></i> 2026-03-27 &nbsp;
-                        <i class="fas fa-folder"></i> 模型部署
-                    </div>
-                    <p class="post-excerpt">知识蒸馏通过采用预先训练好的教师模型的输出作为监督信号去训练另外一个轻量化的网络。</p>
-                    <div class="post-tags">
-                        <span class="tag">DL_Deploy</span>
-                        <span class="tag">知识蒸馏</span>
-                        <span class="tag">模型压缩</span>
-                    </div>
+                <h2 class="post-title"><a href="#article4">知识蒸馏</a></h2>
+                <div class="post-meta">
+                    <i class="far fa-calendar"></i> 2026-03-27 &nbsp;
+                    <i class="fas fa-folder"></i> 模型部署
+                </div>
+                <p class="post-excerpt">知识蒸馏通过采用预先训练好的教师模型的输出作为监督信号去训练另外一个轻量化的网络。</p>
+                <div class="post-tags">
+                    <span class="tag">DL_Deploy</span>
+                    <span class="tag">知识蒸馏</span>
+                    <span class="tag">模型压缩</span>
                 </div>
             </article>
         </div>
@@ -296,7 +283,7 @@
                 <div class="article-body" style="background: url('https://images4.alphacoders.com/121/1218.jpg') right bottom no-repeat; background-size: 200px; background-blend-mode: soft-light;">
                     <h2 id="overview">概述</h2>
                     <p>TensorRT 是一个前向推理框架。在推理过程中，基于 TensorRT 的应用程序的执行速度可以比 CPU 平台速度快 40 倍。</p>
-                    
+
                     <h2 id="features">核心特点</h2>
                     <ul>
                         <li>针对 NVIDIA GPU 优化</li>
@@ -304,16 +291,16 @@
                         <li>动态张量核心支持</li>
                         <li>层融合优化</li>
                     </ul>
-                    
+
                     <h2 id="compatibility">硬件兼容性</h2>
                     <p>不同的硬件需要匹配不同的 CUDA 库，然后还需要进行测试，比如选核等操作。</p>
-                    
+
                     <h3 id="cuda-base">CUDA 基础</h3>
                     <p>TensorRT 以 NVIDIA 的并行编程模型 CUDA 为基础构建而成。</p>
-                    
+
                     <h2 id="usage">使用方法</h2>
                     <p>安装 TensorRT 需要匹配对应的 CUDA 和 cuDNN 版本，建议使用官方 Docker 镜像。</p>
-                    
+
                     <h2 id="code">代码示例</h2>
                     <pre><code>import tensorrt as trt
 
