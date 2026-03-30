@@ -13,10 +13,13 @@
         /* Navigation */
         nav { position: fixed; top: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .nav-container { max-width: 1100px; margin: 0 auto; padding: 0 30px; display: flex; justify-content: space-between; align-items: center; height: 65px; }
-        .logo { font-size: 1.8em; font-weight: 300; color: #5a7c6f; text-decoration: none; letter-spacing: 2px; }
+        .logo { font-size: 1.8em; font-weight: 300; color: #5a7c6f; text-decoration: none; letter-spacing: 2px; position: relative; display: inline-block; }
+        .logo::after { content: '🍀'; position: absolute; right: -35px; top: -5px; font-size: 0.7em; }
         .nav-links { display: flex; gap: 35px; list-style: none; }
-        .nav-links a { color: #555; text-decoration: none; font-size: 0.95em; transition: color 0.3s; }
+        .nav-links a { color: #555; text-decoration: none; font-size: 0.95em; transition: all 0.3s; padding: 5px 12px; border-radius: 5px; position: relative; font-weight: 500; }
+        .nav-links a::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 0; height: 2px; background: #5a7c6f; transition: width 0.3s; }
         .nav-links a:hover { color: #5a7c6f; }
+        .nav-links a:hover::after { width: 80%; }
 
         /* Hero Section */
         .hero { height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; background: linear-gradient(rgba(90, 124, 111, 0.1), rgba(90, 124, 111, 0.2)), url('https://www.incgmedia.com/images/easyblog_articles/3421/20240730-080251.jpg') center/cover fixed; color: white; position: relative; }
@@ -34,16 +37,14 @@
         .section-title p { color: #777; }
 
         /* Posts */
-        .posts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
-        .post-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.3s, box-shadow 0.3s; }
-        .post-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-        .post-image { height: 200px; background: linear-gradient(135deg, #a8d5ba 0%, #7eb6a8 100%); display: flex; align-items: center; justify-content: center; }
-        .post-image i { font-size: 3em; color: rgba(255,255,255,0.8); }
-        .post-content { padding: 25px; }
-        .post-title { font-size: 1.3em; margin-bottom: 10px; color: #222; }
-        .post-title a { color: inherit; text-decoration: none; }
-        .post-meta { color: #888; font-size: 0.9em; margin-bottom: 15px; }
-        .post-excerpt { color: #555; font-size: 0.95em; }
+        .posts-list { max-width: 800px; margin: 0 auto; }
+        .post-item { background: white; padding: 30px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: all 0.3s; border-left: 4px solid #a8d5ba; }
+        .post-item:hover { transform: translateX(5px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left-color: #5a7c6f; }
+        .post-title { font-size: 1.4em; margin-bottom: 12px; color: #222; }
+        .post-title a { color: inherit; text-decoration: none; transition: color 0.3s; }
+        .post-title a:hover { color: #5a7c6f; }
+        .post-meta { color: #888; font-size: 0.9em; margin-bottom: 12px; }
+        .post-excerpt { color: #555; font-size: 0.95em; line-height: 1.7; }
         .post-tags { margin-top: 15px; display: flex; flex-wrap: wrap; gap: 8px; }
         .tag { background: #e8f0ee; color: #5a7c6f; padding: 4px 12px; border-radius: 15px; font-size: 0.85em; }
 
@@ -208,61 +209,57 @@
             <h2>最新文章</h2>
             <p>记录技术学习与思考</p>
         </div>
-        <div class="posts-grid">
-            <article class="post-card">
-                <div class="post-image">
-                    <i class="fas fa-robot"></i>
+        <div class="posts-list">
+            <article class="post-item">
+                <h2 class="post-title"><a href="#article1">TensorRT 简介</a></h2>
+                <div class="post-meta">
+                    <i class="far fa-calendar"></i> 2026-03-30 &nbsp;
+                    <i class="fas fa-folder"></i> 模型部署
                 </div>
-                <div class="post-content">
-                    <h3 class="post-title"><a href="#article1">TensorRT 简介</a></h3>
-                    <div class="post-meta">模型部署</div>
-                    <p class="post-excerpt">TensorRT 是一个前向推理框架。在推理过程中，基于 TensorRT 的应用程序的执行速度可以比 CPU 平台速度快 40 倍。</p>
-                    <div class="post-tags">
-                        <span class="tag">DL_Deploy</span>
-                        <span class="tag">TensorRT</span>
-                    </div>
-                </div>
-            </article>
-            <article class="post-card">
-                <div class="post-image" style="background: linear-gradient(135deg, #7eb6a8 0%, #5a8f7f 100%);">
-                    <i class="fas fa-compress-alt"></i>
-                </div>
-                <div class="post-content">
-                    <h3 class="post-title"><a href="#article2">量化技术详解</a></h3>
-                    <div class="post-meta">模型部署</div>
-                    <p class="post-excerpt">量化，也被称为定点化、离散化，是指用低精度整数来近似表示浮点数（权重和偏置）的方法。</p>
-                    <div class="post-tags">
-                        <span class="tag">DL_Deploy</span>
-                        <span class="tag">量化</span>
-                    </div>
+                <p class="post-excerpt">TensorRT 是一个前向推理框架。在推理过程中，基于 TensorRT 的应用程序的执行速度可以比 CPU 平台速度快 40 倍。</p>
+                <div class="post-tags">
+                    <span class="tag">DL_Deploy</span>
+                    <span class="tag">TensorRT</span>
+                    <span class="tag">NVIDIA</span>
                 </div>
             </article>
-            <article class="post-card">
-                <div class="post-image" style="background: linear-gradient(135deg, #5a8f7f 0%, #4a7a6c 100%);">
-                    <i class="fas fa-cut"></i>
+            <article class="post-item">
+                <h2 class="post-title"><a href="#article2">量化技术详解</a></h2>
+                <div class="post-meta">
+                    <i class="far fa-calendar"></i> 2026-03-29 &nbsp;
+                    <i class="fas fa-folder"></i> 模型部署
                 </div>
-                <div class="post-content">
-                    <h3 class="post-title"><a href="#article3">模型剪枝笔记</a></h3>
-                    <div class="post-meta">模型部署</div>
-                    <p class="post-excerpt">模型剪枝是一种通过移除神经网络中不重要的连接或神经元来减小模型体积和加速推理的技术。</p>
-                    <div class="post-tags">
-                        <span class="tag">DL_Deploy</span>
-                        <span class="tag">剪枝</span>
-                    </div>
+                <p class="post-excerpt">量化，也被称为定点化、离散化，是指用低精度整数来近似表示浮点数（权重和偏置）的方法。</p>
+                <div class="post-tags">
+                    <span class="tag">DL_Deploy</span>
+                    <span class="tag">量化</span>
+                    <span class="tag">模型压缩</span>
                 </div>
             </article>
-            <article class="post-card">
-                <div class="post-image" style="background: linear-gradient(135deg, #8fc5b0 0%, #6fa896 100%);">
-                    <i class="fas fa-graduation-cap"></i>
+            <article class="post-item">
+                <h2 class="post-title"><a href="#article3">模型剪枝笔记</a></h2>
+                <div class="post-meta">
+                    <i class="far fa-calendar"></i> 2026-03-28 &nbsp;
+                    <i class="fas fa-folder"></i> 模型部署
                 </div>
-                <div class="post-content">
-                    <h3 class="post-title"><a href="#article4">知识蒸馏</a></h3>
-                    <div class="post-meta">模型部署</div>
-                    <p class="post-excerpt">知识蒸馏通过采用预先训练好的教师模型的输出作为监督信号去训练另外一个轻量化的网络。</p>
-                    <div class="post-tags">
-                        <span class="tag">DL_Deploy</span>
-                        <span class="tag">知识蒸馏</span>
-                    </div>
+                <p class="post-excerpt">模型剪枝是一种通过移除神经网络中不重要的连接或神经元来减小模型体积和加速推理的技术。</p>
+                <div class="post-tags">
+                    <span class="tag">DL_Deploy</span>
+                    <span class="tag">剪枝</span>
+                    <span class="tag">模型压缩</span>
+                </div>
+            </article>
+            <article class="post-item">
+                <h2 class="post-title"><a href="#article4">知识蒸馏</a></h2>
+                <div class="post-meta">
+                    <i class="far fa-calendar"></i> 2026-03-27 &nbsp;
+                    <i class="fas fa-folder"></i> 模型部署
+                </div>
+                <p class="post-excerpt">知识蒸馏通过采用预先训练好的教师模型的输出作为监督信号去训练另外一个轻量化的网络。</p>
+                <div class="post-tags">
+                    <span class="tag">DL_Deploy</span>
+                    <span class="tag">知识蒸馏</span>
+                    <span class="tag">模型压缩</span>
                 </div>
             </article>
         </div>
