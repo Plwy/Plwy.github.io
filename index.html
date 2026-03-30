@@ -38,8 +38,9 @@
 
         /* Posts */
         .posts-list { max-width: 800px; margin: 0 auto; }
-        .post-item { background: white; padding: 30px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: all 0.3s; border-left: 4px solid #a8d5ba; }
+        .post-item { background: white; padding: 30px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: all 0.3s; border-left: 4px solid #a8d5ba; display: flex; gap: 20px; align-items: flex-start; }
         .post-item:hover { transform: translateX(5px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left-color: #5a7c6f; }
+        .post-icon { font-size: 2.5em; min-width: 60px; text-align: center; padding-top: 5px; }
         .post-title { font-size: 1.4em; margin-bottom: 12px; color: #222; }
         .post-title a { color: inherit; text-decoration: none; transition: color 0.3s; }
         .post-title a:hover { color: #5a7c6f; }
@@ -211,55 +212,67 @@
         </div>
         <div class="posts-list">
             <article class="post-item">
-                <h2 class="post-title"><a href="#article1">TensorRT 简介</a></h2>
-                <div class="post-meta">
-                    <i class="far fa-calendar"></i> 2026-03-30 &nbsp;
-                    <i class="fas fa-folder"></i> 模型部署
-                </div>
-                <p class="post-excerpt">TensorRT 是一个前向推理框架。在推理过程中，基于 TensorRT 的应用程序的执行速度可以比 CPU 平台速度快 40 倍。</p>
-                <div class="post-tags">
-                    <span class="tag">DL_Deploy</span>
-                    <span class="tag">TensorRT</span>
-                    <span class="tag">NVIDIA</span>
-                </div>
-            </article>
-            <article class="post-item">
-                <h2 class="post-title"><a href="#article2">量化技术详解</a></h2>
-                <div class="post-meta">
-                    <i class="far fa-calendar"></i> 2026-03-29 &nbsp;
-                    <i class="fas fa-folder"></i> 模型部署
-                </div>
-                <p class="post-excerpt">量化，也被称为定点化、离散化，是指用低精度整数来近似表示浮点数（权重和偏置）的方法。</p>
-                <div class="post-tags">
-                    <span class="tag">DL_Deploy</span>
-                    <span class="tag">量化</span>
-                    <span class="tag">模型压缩</span>
+                <div class="post-icon">🤖</div>
+                <div class="post-content-wrapper">
+                    <h2 class="post-title"><a href="#article1">TensorRT 简介</a></h2>
+                    <div class="post-meta">
+                        <i class="far fa-calendar"></i> 2026-03-30 &nbsp;
+                        <i class="fas fa-folder"></i> 模型部署
+                    </div>
+                    <p class="post-excerpt">TensorRT 是一个前向推理框架。在推理过程中，基于 TensorRT 的应用程序的执行速度可以比 CPU 平台速度快 40 倍。</p>
+                    <div class="post-tags">
+                        <span class="tag">DL_Deploy</span>
+                        <span class="tag">TensorRT</span>
+                        <span class="tag">NVIDIA</span>
+                    </div>
                 </div>
             </article>
             <article class="post-item">
-                <h2 class="post-title"><a href="#article3">模型剪枝笔记</a></h2>
-                <div class="post-meta">
-                    <i class="far fa-calendar"></i> 2026-03-28 &nbsp;
-                    <i class="fas fa-folder"></i> 模型部署
-                </div>
-                <p class="post-excerpt">模型剪枝是一种通过移除神经网络中不重要的连接或神经元来减小模型体积和加速推理的技术。</p>
-                <div class="post-tags">
-                    <span class="tag">DL_Deploy</span>
-                    <span class="tag">剪枝</span>
-                    <span class="tag">模型压缩</span>
+                <div class="post-icon">📦</div>
+                <div class="post-content-wrapper">
+                    <h2 class="post-title"><a href="#article2">量化技术详解</a></h2>
+                    <div class="post-meta">
+                        <i class="far fa-calendar"></i> 2026-03-29 &nbsp;
+                        <i class="fas fa-folder"></i> 模型部署
+                    </div>
+                    <p class="post-excerpt">量化，也被称为定点化、离散化，是指用低精度整数来近似表示浮点数（权重和偏置）的方法。</p>
+                    <div class="post-tags">
+                        <span class="tag">DL_Deploy</span>
+                        <span class="tag">量化</span>
+                        <span class="tag">模型压缩</span>
+                    </div>
                 </div>
             </article>
             <article class="post-item">
-                <h2 class="post-title"><a href="#article4">知识蒸馏</a></h2>
-                <div class="post-meta">
-                    <i class="far fa-calendar"></i> 2026-03-27 &nbsp;
-                    <i class="fas fa-folder"></i> 模型部署
+                <div class="post-icon">✂️</div>
+                <div class="post-content-wrapper">
+                    <h2 class="post-title"><a href="#article3">模型剪枝笔记</a></h2>
+                    <div class="post-meta">
+                        <i class="far fa-calendar"></i> 2026-03-28 &nbsp;
+                        <i class="fas fa-folder"></i> 模型部署
+                    </div>
+                    <p class="post-excerpt">模型剪枝是一种通过移除神经网络中不重要的连接或神经元来减小模型体积和加速推理的技术。</p>
+                    <div class="post-tags">
+                        <span class="tag">DL_Deploy</span>
+                        <span class="tag">剪枝</span>
+                        <span class="tag">模型压缩</span>
+                    </div>
                 </div>
-                <p class="post-excerpt">知识蒸馏通过采用预先训练好的教师模型的输出作为监督信号去训练另外一个轻量化的网络。</p>
-                <div class="post-tags">
-                    <span class="tag">DL_Deploy</span>
-                    <span class="tag">知识蒸馏</span>
-                    <span class="tag">模型压缩</span>
+            </article>
+            <article class="post-item">
+                <div class="post-icon">🎓</div>
+                <div class="post-content-wrapper">
+                    <h2 class="post-title"><a href="#article4">知识蒸馏</a></h2>
+                    <div class="post-meta">
+                        <i class="far fa-calendar"></i> 2026-03-27 &nbsp;
+                        <i class="fas fa-folder"></i> 模型部署
+                    </div>
+                    <p class="post-excerpt">知识蒸馏通过采用预先训练好的教师模型的输出作为监督信号去训练另外一个轻量化的网络。</p>
+                    <div class="post-tags">
+                        <span class="tag">DL_Deploy</span>
+                        <span class="tag">知识蒸馏</span>
+                        <span class="tag">模型压缩</span>
+                    </div>
                 </div>
             </article>
         </div>
