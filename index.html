@@ -14,7 +14,7 @@
         nav { position: fixed; top: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .nav-container { max-width: 1100px; margin: 0 auto; padding: 0 30px; display: flex; justify-content: space-between; align-items: center; height: 65px; }
         .logo { font-size: 1.8em; font-weight: 300; color: #5a7c6f; text-decoration: none; letter-spacing: 2px; position: relative; display: inline-block; }
-        .logo::after { content: '🍀'; position: absolute; right: -35px; top: -5px; font-size: 0.7em; }
+        .logo::after { content: '🍀'; position: absolute; right: -28px; bottom: -8px; font-size: 0.6em; }
         .nav-links { display: flex; gap: 35px; list-style: none; }
         .nav-links a { color: #555; text-decoration: none; font-size: 0.95em; transition: all 0.3s; padding: 5px 12px; border-radius: 5px; position: relative; font-weight: 500; }
         .nav-links a::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 0; height: 2px; background: #5a7c6f; transition: width 0.3s; }
@@ -111,10 +111,10 @@
         <div class="nav-container">
             <a href="#home" class="logo">侧耳倾听</a>
             <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#posts">Posts</a></li>
-                <li><a href="#categories">Categories</a></li>
-                <li><a href="#about">About</a></li>
+                <li><a href="#home"><i class="fas fa-home" style="margin-right: 5px;"></i>Home</a></li>
+                <li><a href="#posts"><i class="fas fa-file-alt" style="margin-right: 5px;"></i>Posts</a></li>
+                <li><a href="#categories"><i class="fas fa-folder-open" style="margin-right: 5px;"></i>Categories</a></li>
+                <li><a href="#about"><i class="fas fa-user" style="margin-right: 5px;"></i>About</a></li>
             </ul>
         </div>
     </nav>
