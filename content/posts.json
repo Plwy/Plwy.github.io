@@ -1,0 +1,100 @@
+[
+  {
+    "slug": "tensorrt-intro",
+    "title": "TensorRT 简介",
+    "date": "2026-03-30",
+    "excerpt": "梳理 TensorRT 的定位、量化能力和常见硬件适配注意点。",
+    "tags": ["DL_Deploy", "TensorRT", "NVIDIA"],
+    "markdown": "content/articles/deploy/tensorrt-intro.md",
+    "category": {
+      "slug": "deploy",
+      "name": "模型部署",
+      "description": "围绕推理加速、量化、模型压缩和服务上线的部署笔记。",
+      "icon": "🚀"
+    }
+  },
+  {
+    "slug": "quantization-guide",
+    "title": "量化技术详解",
+    "date": "2026-03-29",
+    "excerpt": "从低比特表示出发，整理模型量化在速度和体积上的实际收益。",
+    "tags": ["DL_Deploy", "量化", "模型压缩"],
+    "markdown": "content/articles/deploy/quantization-guide.md",
+    "category": {
+      "slug": "deploy",
+      "name": "模型部署",
+      "description": "围绕推理加速、量化、模型压缩和服务上线的部署笔记。",
+      "icon": "🚀"
+    }
+  },
+  {
+    "slug": "triton-rollout-checklist",
+    "title": "Triton 上线检查清单",
+    "date": "2026-03-28",
+    "excerpt": "把输入输出、资源配额和可观测性压缩成一张可执行清单。",
+    "tags": ["Triton", "DL_Deploy", "推理服务"],
+    "markdown": "content/articles/deploy/triton-rollout-checklist.md",
+    "category": {
+      "slug": "deploy",
+      "name": "模型部署",
+      "description": "围绕推理加速、量化、模型压缩和服务上线的部署笔记。",
+      "icon": "🚀"
+    }
+  },
+  {
+    "slug": "cache-friendly-structs",
+    "title": "Cache Friendly 的结构体设计",
+    "date": "2026-03-29",
+    "excerpt": "从缓存命中率出发，重新看 AoS 与 SoA 在项目里的取舍。",
+    "tags": ["C++", "性能优化", "数据布局"],
+    "markdown": "content/articles/cpp/cache-friendly-structs.md",
+    "category": {
+      "slug": "cpp",
+      "name": "C++",
+      "description": "记录偏工程侧的 C++ 性能、数据布局和并发协作经验。",
+      "icon": "C++"
+    }
+  },
+  {
+    "slug": "thread-pool-boundaries",
+    "title": "线程池任务切分的几个坑",
+    "date": "2026-03-27",
+    "excerpt": "粒度过细、生命周期不清楚和缺少背压，都是常见问题。",
+    "tags": ["C++", "并发", "线程池"],
+    "markdown": "content/articles/cpp/thread-pool-boundaries.md",
+    "category": {
+      "slug": "cpp",
+      "name": "C++",
+      "description": "记录偏工程侧的 C++ 性能、数据布局和并发协作经验。",
+      "icon": "C++"
+    }
+  },
+  {
+    "slug": "experiment-tracker",
+    "title": "实验记录脚本的最小闭环",
+    "date": "2026-03-30",
+    "excerpt": "把参数、指标和输出产物统一落档，减少复现时的沟通成本。",
+    "tags": ["Python", "实验管理", "自动化"],
+    "markdown": "content/articles/python/experiment-tracker.md",
+    "category": {
+      "slug": "python",
+      "name": "Python",
+      "description": "把实验流程、日志整理和脚本工具做成可持续复用的自动化能力。",
+      "icon": "Py"
+    }
+  },
+  {
+    "slug": "log-cleanup-pipeline",
+    "title": "批量清洗日志的脚本模板",
+    "date": "2026-03-27",
+    "excerpt": "统一时间、抽取 trace id、脱敏后再做聚合会更稳定。",
+    "tags": ["Python", "日志处理", "工具脚本"],
+    "markdown": "content/articles/python/log-cleanup-pipeline.md",
+    "category": {
+      "slug": "python",
+      "name": "Python",
+      "description": "把实验流程、日志整理和脚本工具做成可持续复用的自动化能力。",
+      "icon": "Py"
+    }
+  }
+]
