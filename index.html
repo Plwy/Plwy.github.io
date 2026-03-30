@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>侧耳倾听 | 技术博客</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="链接2">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
@@ -13,16 +13,16 @@
         /* Navigation */
         nav { position: fixed; top: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .nav-container { max-width: 1100px; margin: 0 auto; padding: 0 30px; display: flex; justify-content: space-between; align-items: center; height: 65px; }
-        .logo { font-size: 1.8em; font-weight: 300; color: #5a7c6f; text-decoration: none; letter-spacing: 2px; position: relative; display: inline-block; }
-        .logo::after { content: '🍀'; position: absolute; right: -28px; bottom: -8px; font-size: 0.6em; }
+        .logo { font-size: 1.8em; font-weight: bold; color: #5a7c6f; text-decoration: none; letter-spacing: 2px; position: relative; display: inline-block; }
+        .logo::after { content: ' 🍀'; position: absolute; right: -35px; bottom: -8px; font-size: 0.6em; }
         .nav-links { display: flex; gap: 35px; list-style: none; }
-        .nav-links a { color: #555; text-decoration: none; font-size: 0.95em; transition: all 0.3s; padding: 5px 12px; border-radius: 5px; position: relative; font-weight: 500; }
+        .nav-links a { color: #555; text-decoration: none; font-size: 0.95em; transition: all 0.3s; padding: 5px 12px; border-radius: 5px; position: relative; font-weight: bold; }
         .nav-links a::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 0; height: 2px; background: #5a7c6f; transition: width 0.3s; }
         .nav-links a:hover { color: #5a7c6f; }
         .nav-links a:hover::after { width: 80%; }
 
         /* Hero Section */
-        .hero { height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; background: linear-gradient(rgba(44, 62, 57, 0.3), rgba(44, 62, 57, 0.4)), url('https://raw.githubusercontent.com/Plwy/Plwy.github.io/gh-pages/images/hero-bg.jpg') center/cover fixed; color: white; position: relative; }
+        .hero { height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; background: linear-gradient(rgba(44, 62, 57, 0.3), rgba(44, 62, 57, 0.4)), url('链接3') center/cover fixed; color: white; position: relative; }
         .hero::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.35); }
         .hero-content { position: relative; z-index: 1; }
         .hero h1 { font-size: 1.8em; margin-bottom: 15px; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); font-weight: 300; letter-spacing: 3px; font-style: italic; }
@@ -110,10 +110,10 @@
         <div class="nav-container">
             <a href="#home" class="logo">侧耳倾听</a>
             <ul class="nav-links">
-                <li><a href="#home"><i class="fas fa-home" style="margin-right: 5px;"></i>Home</a></li>
-                <li><a href="#posts"><i class="fas fa-file-alt" style="margin-right: 5px;"></i>Posts</a></li>
-                <li><a href="#categories"><i class="fas fa-folder-open" style="margin-right: 5px;"></i>Categories</a></li>
-                <li><a href="#about"><i class="fas fa-user" style="margin-right: 5px;"></i>About</a></li>
+                <li><a href="#home" style="font-weight: bold;"><i class="fas fa-home" style="margin-right: 5px;"></i>Home</a></li>
+                <li><a href="#posts" style="font-weight: bold;"><i class="fas fa-file-alt" style="margin-right: 5px;"></i>Posts</a></li>
+                <li><a href="#categories" style="font-weight: bold;"><i class="fas fa-folder-open" style="margin-right: 5px;"></i>Categories</a></li>
+                <li><a href="#about" style="font-weight: bold;"><i class="fas fa-user" style="margin-right: 5px;"></i>About</a></li>
             </ul>
         </div>
     </nav>
@@ -262,6 +262,45 @@
                     <span class="tag">模型压缩</span>
                 </div>
             </article>
+            <article class="post-item">
+                <h2 class="post-title"><a href="#article5">深度学习优化技巧</a></h2>
+                <div class="post-meta">
+                    <i class="far fa-calendar"></i> 2026-03-26 &nbsp;
+                    <i class="fas fa-folder"></i> 模型部署
+                </div>
+                <p class="post-excerpt">深度学习模型的优化涉及多个方面，包括超参数调优、数据增强、模型剪枝等。</p>
+                <div class="post-tags">
+                    <span class="tag">DL_Optimization</span>
+                    <span class="tag">模型优化</span>
+                    <span class="tag">超参数调优</span>
+                </div>
+            </article>
+            <article class="post-item">
+                <h2 class="post-title"><a href="#article6">自然语言处理进展</a></h2>
+                <div class="post-meta">
+                    <i class="far fa-calendar"></i> 2026-03-25 &nbsp;
+                    <i class="fas fa-folder"></i> 论文
+                </div>
+                <p class="post-excerpt">自然语言处理（NLP）近年来取得了显著进展，特别是在预训练模型和Transformer架构的应用上。</p>
+                <div class="post-tags">
+                    <span class="tag">NLP</span>
+                    <span class="tag">Transformer</span>
+                    <span class="tag">BERT</span>
+                </div>
+            </article>
+            <article class="post-item">
+                <h2 class="post-title"><a href="#article7">计算机视觉应用</a></h2>
+                <div class="post-meta">
+                    <i class="far fa-calendar"></i> 2026-03-24 &nbsp;
+                    <i class="fas fa-folder"></i> 算法
+                </div>
+                <p class="post-excerpt">计算机视觉技术在图像识别、目标检测和图像分割等领域有着广泛的应用。</p>
+                <div class="post-tags">
+                    <span class="tag">CV</span>
+                    <span class="tag">图像识别</span>
+                    <span class="tag">目标检测</span>
+                </div>
+            </article>
         </div>
     </section>
 
@@ -280,7 +319,7 @@
                         <i class="fas fa-tags"></i> DL_Deploy, TensorRT, NVIDIA
                     </div>
                 </div>
-                <div class="article-body" style="background: url('https://images4.alphacoders.com/121/1218.jpg') right bottom no-repeat; background-size: 200px; background-blend-mode: soft-light;">
+                <div class="article-body" style="background: url('链接4') right bottom no-repeat; background-size: 200px; background-blend-mode: soft-light;">
                     <h2 id="overview">概述</h2>
                     <p>TensorRT 是一个前向推理框架。在推理过程中，基于 TensorRT 的应用程序的执行速度可以比 CPU 平台速度快 40 倍。</p>
 
@@ -302,7 +341,7 @@
                     <p>安装 TensorRT 需要匹配对应的 CUDA 和 cuDNN 版本，建议使用官方 Docker 镜像。</p>
 
                     <h2 id="code">代码示例</h2>
-                    <pre><code>import tensorrt as trt
+                   <pre><code>import tensorrt as trt
 
 logger = trt.Logger(trt.Logger.WARNING)
 builder = trt.Builder(logger)
@@ -335,9 +374,9 @@ engine = builder.build_engine(network, config)</code></pre>
                 <div class="sidebar-section">
                     <h3><i class="fas fa-folder-open"></i> 分类</h3>
                     <ul class="category-list">
-                        <li><a href="#">模型部署 <span class="count">8</span></a></li>
-                        <li><a href="#">论文 <span class="count">4</span></a></li>
-                        <li><a href="#">算法 <span class="count">3</span></a></li>
+                        <li><a href="#posts">模型部署 <span class="count">8</span></a></li>
+                        <li><a href="#posts">论文 <span class="count">4</span></a></li>
+                        <li><a href="#posts">算法 <span class="count">3</span></a></li>
                     </ul>
                 </div>
                 <div class="sidebar-section">
@@ -363,7 +402,7 @@ engine = builder.build_engine(network, config)</code></pre>
                 <h3 style="font-size: 2em; color: #5a7c6f; margin-bottom: 20px;">侧耳倾听</h3>
                 <p style="color: #555; line-height: 1.9;">这是一个记录技术学习与思考的地方。在这里，我会分享深度学习部署、算法、C++、Python 等相关的技术笔记，以及生活中的点滴记录。</p>
                 <div class="social" style="margin-top: 30px;">
-                    <a href="https://github.com/Plwy"><i class="fab fa-github"></i></a>
+                    <a href="链接1"><i class="fab fa-github"></i></a>
                 </div>
             </div>
         </div>
@@ -372,7 +411,7 @@ engine = builder.build_engine(network, config)</code></pre>
     <!-- Footer -->
     <footer>
         <div class="social">
-            <a href="https://github.com/Plwy"><i class="fab fa-github"></i></a>
+            <a href="链接1"><i class="fab fa-github"></i></a>
         </div>
         <p>&copy; 2026 侧耳倾听. 用 ❤️ 构建</p>
     </footer>
