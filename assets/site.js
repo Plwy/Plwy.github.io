@@ -1,4 +1,4 @@
-const CACHE_BUSTER = "20260402c";
+﻿const CACHE_BUSTER = "20260402d";
 const ARTICLE_REPO_BASE = "https://raw.githubusercontent.com/Plwy/plwy-articles/main";
 const DEFAULT_OG_IMAGE = "https://plwy.github.io/images/hero-bg.jpg";
 const HOME_PAGE_SIZE = 8;
@@ -395,6 +395,47 @@ function buildArticleOutline(container) {
     `).join("");
 }
 
+function rewriteRenderedAssets(container, assetBase) {
+    container.querySelectorAll("img[src]").forEach((image) => {
+        image.src = resolveAssetUrl(image.getAttribute("src") || "", assetBase);
+    });
+
+    container.querySelectorAll("a[href]").forEach((link) => {
+        const href = link.getAttribute("href") || "";
+        if (!href || href.startsWith("#")) return;
+        const resolved = resolveAssetUrl(href, assetBase);
+        link.setAttribute("href", resolved);
+        if (/^https?:\/\//i.test(resolved)) {
+            link.setAttribute("target", "_blank");
+            link.setAttribute("rel", "noreferrer");
+        }
+    });
+}
+
+function renderMarkdownArticle(markdown, assetBase) {
+    const normalizedMarkdown = markdown.replace(/^\[TOC\]\s*$/gim, '').trim();
+    if (!window.marked) {
+        return markdownToHtml(normalizedMarkdown, assetBase);
+    }
+
+    const renderer = new window.marked.Renderer();
+    renderer.heading = ({ tokens, depth }) => {
+        const text = (tokens || []).map((token) => token.text || "").join("").trim();
+        const id = slugifyHeading(text) || `section-${depth}`;
+        return `<h${depth} id="${id}">${window.marked.Parser.parseInline(tokens)}</h${depth}>`;
+    };
+
+    const rawHtml = window.marked.parse(normalizedMarkdown, {
+        gfm: true,
+        breaks: true,
+        headerIds: true,
+        mangle: false,
+        renderer
+    });
+
+    return window.DOMPurify ? window.DOMPurify.sanitize(rawHtml) : rawHtml;
+}
+
 function renderHome(posts, categories) {
     const categoryGrid = document.getElementById("category-grid");
     const latestPosts = document.getElementById("latest-posts");
@@ -589,7 +630,8 @@ async function renderArticle(posts) {
 
     const markdown = await response.text();
     const markdownBase = `${ARTICLE_REPO_BASE}/${post.markdown.substring(0, post.markdown.lastIndexOf("/"))}`;
-    body.innerHTML = markdownToHtml(markdown, markdownBase);
+    body.innerHTML = renderMarkdownArticle(markdown, markdownBase);
+    rewriteRenderedAssets(body, markdownBase);
 
     buildArticleOutline(body);
     enhanceCodeBlocks(body);
@@ -628,3 +670,7 @@ async function init() {
 }
 
 init();
+
+
+
+
