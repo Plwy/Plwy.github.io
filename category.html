@@ -4,7 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>分类列表 | 侧耳倾听</title>
+    <meta name="description" content="查看不同分类下的文章列表。">
+    <meta property="og:title" content="分类列表 | 侧耳倾听">
+    <meta property="og:description" content="查看不同分类下的文章列表。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://plwy.github.io/category.html">
+    <meta property="og:image" content="https://plwy.github.io/images/hero-bg.jpg">
+    <meta name="theme-color" content="#f7f5ee">
+    <script>
+        (function () {
+            const storedTheme = localStorage.getItem("theme");
+            if (storedTheme === "dark") {
+                document.documentElement.setAttribute("data-theme", "dark");
+            }
+        })();
+    </script>
     <link rel="stylesheet" href="assets/site.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
 </head>
 <body data-page="category">
     <header class="site-header">
@@ -15,8 +31,9 @@
                     <li><a href="index.html"><span class="nav-icon" aria-hidden="true">⌂</span><span>Home</span></a></li>
                     <li><a href="index.html#categories"><span class="nav-icon" aria-hidden="true">▣</span><span>Categories</span></a></li>
                     <li><a href="index.html#posts"><span class="nav-icon" aria-hidden="true">✦</span><span>Posts</span></a></li>
-                    <li><a href="about.html"><span class="nav-icon" aria-hidden="true">◌</span><span>About</span></a></li>
+                    <li><a href="about.html"><span class="nav-icon" aria-hidden="true">○</span><span>About</span></a></li>
                 </ul>
+                <button class="theme-toggle" id="theme-toggle" type="button" aria-label="切换深色模式">◐</button>
             </div>
         </nav>
     </header>
@@ -26,6 +43,9 @@
             <p class="breadcrumb"><a href="index.html">Home</a> / <span id="category-breadcrumb">分类</span></p>
             <h2 id="category-title">分类加载中...</h2>
         </div>
+        <div class="search-bar search-bar-left">
+            <input id="category-search" class="search-input" type="search" placeholder="搜索当前分类中的文章..." aria-label="搜索当前分类中的文章">
+        </div>
         <div class="post-list" id="category-posts"></div>
     </main>
 
@@ -33,6 +53,7 @@
         <p>&copy; 2026 侧耳倾听</p>
     </footer>
 
-    <script src="assets/site.js?v=20260401b"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+    <script src="assets/site.js?v=20260402a"></script>
 </body>
 </html>

@@ -4,7 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>文章详情 | 侧耳倾听</title>
+    <meta name="description" content="查看文章详情与上下篇导航。">
+    <meta property="og:title" content="文章详情 | 侧耳倾听">
+    <meta property="og:description" content="查看文章详情与上下篇导航。">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://plwy.github.io/article.html">
+    <meta property="og:image" content="https://plwy.github.io/images/hero-bg.jpg">
+    <meta name="theme-color" content="#f7f5ee">
+    <script>
+        (function () {
+            const storedTheme = localStorage.getItem("theme");
+            if (storedTheme === "dark") {
+                document.documentElement.setAttribute("data-theme", "dark");
+            }
+        })();
+    </script>
     <link rel="stylesheet" href="assets/site.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
 </head>
 <body data-page="article">
     <header class="site-header">
@@ -15,8 +31,9 @@
                     <li><a href="index.html"><span class="nav-icon" aria-hidden="true">⌂</span><span>Home</span></a></li>
                     <li><a href="index.html#categories"><span class="nav-icon" aria-hidden="true">▣</span><span>Categories</span></a></li>
                     <li><a href="index.html#posts"><span class="nav-icon" aria-hidden="true">✦</span><span>Posts</span></a></li>
-                    <li><a href="about.html"><span class="nav-icon" aria-hidden="true">◌</span><span>About</span></a></li>
+                    <li><a href="about.html"><span class="nav-icon" aria-hidden="true">○</span><span>About</span></a></li>
                 </ul>
+                <button class="theme-toggle" id="theme-toggle" type="button" aria-label="切换深色模式">◐</button>
             </div>
         </nav>
     </header>
@@ -31,6 +48,7 @@
             <div class="article-body" id="article-body">
                 <p>正在读取 Markdown 正文...</p>
             </div>
+            <nav class="article-pagination" id="article-pagination" aria-label="上一篇下一篇"></nav>
         </article>
         <aside class="sidebar">
             <div class="sidebar-section">
@@ -48,6 +66,7 @@
         <p>&copy; 2026 侧耳倾听</p>
     </footer>
 
-    <script src="assets/site.js?v=20260401b"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+    <script src="assets/site.js?v=20260402a"></script>
 </body>
 </html>
