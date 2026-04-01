@@ -1,6 +1,8 @@
-const CACHE_BUSTER = "20260402b";
+const CACHE_BUSTER = "20260402c";
 const ARTICLE_REPO_BASE = "https://raw.githubusercontent.com/Plwy/plwy-articles/main";
 const DEFAULT_OG_IMAGE = "https://plwy.github.io/images/hero-bg.jpg";
+const HOME_PAGE_SIZE = 8;
+const CATEGORY_PAGE_SIZE = 10;
 
 function getQueryParam(name) {
     return new URLSearchParams(window.location.search).get(name);
@@ -234,6 +236,21 @@ function sortPosts(posts) {
     });
 }
 
+function extractTags(posts) {
+    return [...new Set(posts.flatMap((post) => post.tags || []).filter(Boolean))].sort((a, b) => a.localeCompare(b, "zh-CN"));
+}
+
+function paginatePosts(posts, currentPage, pageSize) {
+    const totalPages = Math.max(1, Math.ceil(posts.length / pageSize));
+    const safePage = Math.min(Math.max(currentPage, 1), totalPages);
+    const start = (safePage - 1) * pageSize;
+    return {
+        page: safePage,
+        totalPages,
+        items: posts.slice(start, start + pageSize)
+    };
+}
+
 function renderPostList(posts) {
     return posts.map((post) => `
         <a class="post-card" href="article.html?slug=${post.slug}">
@@ -243,6 +260,34 @@ function renderPostList(posts) {
             ${renderTags(post.tags)}
         </a>
     `).join("");
+}
+
+function renderTagTabs(container, tags, activeTag) {
+    if (!container) return;
+    const allTags = ["全部", ...tags];
+    container.innerHTML = allTags.map((tag) => {
+        const value = tag === "全部" ? "all" : tag;
+        return `<button class="tag-tab${value === activeTag ? " is-active" : ""}" type="button" data-tag="${value}">${tag}</button>`;
+    }).join("");
+}
+
+function renderPager(container, currentPage, totalPages) {
+    if (!container) return;
+    if (totalPages <= 1) {
+        container.innerHTML = "";
+        return;
+    }
+
+    const pages = [];
+    for (let page = 1; page <= totalPages; page += 1) {
+        pages.push(`<button class="pagination-button${page === currentPage ? " is-active" : ""}" type="button" data-page="${page}">${page}</button>`);
+    }
+
+    container.innerHTML = `
+        <button class="pagination-button" type="button" data-page="${currentPage - 1}" ${currentPage === 1 ? "disabled" : ""}>上一页</button>
+        ${pages.join("")}
+        <button class="pagination-button" type="button" data-page="${currentPage + 1}" ${currentPage === totalPages ? "disabled" : ""}>下一页</button>
+    `;
 }
 
 function setupSearch(inputId, onFilter) {
@@ -277,15 +322,99 @@ function matchesPost(post, query) {
         .includes(query);
 }
 
+function slugifyHeading(text) {
+    return text
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
+        .replace(/\s+/g, "-");
+}
+
+function enhanceCodeBlocks(container) {
+    const blocks = container.querySelectorAll("pre > code");
+    blocks.forEach((code) => {
+        const pre = code.parentElement;
+        if (!pre || pre.parentElement?.classList.contains("code-block")) return;
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "code-block";
+
+        const toolbar = document.createElement("div");
+        toolbar.className = "code-toolbar";
+
+        const language = [...code.classList].find((item) => item.startsWith("language-"))?.replace("language-", "") || "text";
+        const label = document.createElement("span");
+        label.className = "code-language";
+        label.textContent = language;
+
+        const button = document.createElement("button");
+        button.className = "code-copy-button";
+        button.type = "button";
+        button.textContent = "复制";
+        button.addEventListener("click", async () => {
+            try {
+                await navigator.clipboard.writeText(code.textContent || "");
+                button.textContent = "已复制";
+                window.setTimeout(() => { button.textContent = "复制"; }, 1400);
+            } catch {
+                button.textContent = "复制失败";
+                window.setTimeout(() => { button.textContent = "复制"; }, 1400);
+            }
+        });
+
+        toolbar.append(label, button);
+        pre.parentNode.insertBefore(wrapper, pre);
+        wrapper.append(toolbar, pre);
+    });
+}
+
+function buildArticleOutline(container) {
+    const outline = document.getElementById("article-outline");
+    if (!outline) return;
+
+    const headings = [...container.querySelectorAll("h2, h3")];
+    if (!headings.length) {
+        outline.innerHTML = "<li>这篇文章暂时没有二级标题。</li>";
+        return;
+    }
+
+    const usedIds = new Set();
+    headings.forEach((heading, index) => {
+        let id = slugifyHeading(heading.textContent || "") || `section-${index + 1}`;
+        while (usedIds.has(id)) {
+            id = `${id}-${index + 1}`;
+        }
+        usedIds.add(id);
+        heading.id = id;
+    });
+
+    outline.innerHTML = headings.map((heading) => `
+        <li class="outline-level-${heading.tagName.toLowerCase() === "h2" ? "2" : "3"}">
+            <a href="#${heading.id}">${heading.textContent}</a>
+        </li>
+    `).join("");
+}
+
 function renderHome(posts, categories) {
     const categoryGrid = document.getElementById("category-grid");
     const latestPosts = document.getElementById("latest-posts");
+    const tagTabs = document.getElementById("home-tag-tabs");
+    const pagination = document.getElementById("home-pagination");
     const allCategories = buildCategorySummary(posts, categories);
-    const allPosts = sortPosts(posts).slice(0, 12);
+    const allPosts = sortPosts(posts);
+    let activeTag = "all";
+    let currentPage = 1;
 
     const renderFiltered = (query) => {
         const filteredCategories = allCategories.filter((category) => matchesCategory(category, query));
-        const filteredPosts = allPosts.filter((post) => matchesPost(post, query));
+        const queryPosts = allPosts.filter((post) => matchesPost(post, query));
+        const tags = extractTags(queryPosts);
+        if (activeTag !== "all" && !tags.includes(activeTag)) {
+            activeTag = "all";
+        }
+        const filteredPosts = activeTag === "all" ? queryPosts : queryPosts.filter((post) => (post.tags || []).includes(activeTag));
+        const paged = paginatePosts(filteredPosts, currentPage, HOME_PAGE_SIZE);
+        currentPage = paged.page;
 
         categoryGrid.innerHTML = filteredCategories.length
             ? filteredCategories.map((category) => `
@@ -298,12 +427,33 @@ function renderHome(posts, categories) {
             `).join("")
             : '<div class="empty-state">没有匹配到分类结果。</div>';
 
+        renderTagTabs(tagTabs, tags, activeTag);
+        renderPager(pagination, paged.page, paged.totalPages);
+
         latestPosts.innerHTML = filteredPosts.length
-            ? renderPostList(filteredPosts)
+            ? renderPostList(paged.items)
             : '<div class="empty-state">没有匹配到文章结果。</div>';
     };
 
-    setupSearch("home-search", renderFiltered);
+    tagTabs?.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-tag]");
+        if (!button) return;
+        activeTag = button.dataset.tag || "all";
+        currentPage = 1;
+        renderFiltered(document.getElementById("home-search")?.value.trim().toLowerCase() || "");
+    });
+
+    pagination?.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-page]");
+        if (!button || button.disabled) return;
+        currentPage = Number(button.dataset.page || "1");
+        renderFiltered(document.getElementById("home-search")?.value.trim().toLowerCase() || "");
+    });
+
+    setupSearch("home-search", (query) => {
+        currentPage = 1;
+        renderFiltered(query);
+    });
 }
 
 function renderCategory(posts, categories) {
@@ -312,7 +462,11 @@ function renderCategory(posts, categories) {
     const title = document.getElementById("category-title");
     const breadcrumb = document.getElementById("category-breadcrumb");
     const list = document.getElementById("category-posts");
+    const tagTabs = document.getElementById("category-tag-tabs");
+    const pagination = document.getElementById("category-pagination");
     const category = categories.find((item) => item.slug === slug);
+    let activeTag = "all";
+    let currentPage = 1;
 
     if (!category) {
         title.textContent = "未找到这个分类";
@@ -334,13 +488,42 @@ function renderCategory(posts, categories) {
     });
 
     const renderFiltered = (query) => {
-        const filtered = categoryPosts.filter((post) => matchesPost(post, query));
+        const queryPosts = categoryPosts.filter((post) => matchesPost(post, query));
+        const tags = extractTags(queryPosts);
+        if (activeTag !== "all" && !tags.includes(activeTag)) {
+            activeTag = "all";
+        }
+        const filtered = activeTag === "all" ? queryPosts : queryPosts.filter((post) => (post.tags || []).includes(activeTag));
+        const paged = paginatePosts(filtered, currentPage, CATEGORY_PAGE_SIZE);
+        currentPage = paged.page;
+
+        renderTagTabs(tagTabs, tags, activeTag);
+        renderPager(pagination, paged.page, paged.totalPages);
+
         list.innerHTML = filtered.length
-            ? renderPostList(filtered)
+            ? renderPostList(paged.items)
             : '<div class="empty-state">这个分类下没有匹配到文章。</div>';
     };
 
-    setupSearch("category-search", renderFiltered);
+    tagTabs?.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-tag]");
+        if (!button) return;
+        activeTag = button.dataset.tag || "all";
+        currentPage = 1;
+        renderFiltered(document.getElementById("category-search")?.value.trim().toLowerCase() || "");
+    });
+
+    pagination?.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-page]");
+        if (!button || button.disabled) return;
+        currentPage = Number(button.dataset.page || "1");
+        renderFiltered(document.getElementById("category-search")?.value.trim().toLowerCase() || "");
+    });
+
+    setupSearch("category-search", (query) => {
+        currentPage = 1;
+        renderFiltered(query);
+    });
 }
 
 function renderArticlePagination(posts, currentIndex) {
@@ -408,6 +591,9 @@ async function renderArticle(posts) {
     const markdownBase = `${ARTICLE_REPO_BASE}/${post.markdown.substring(0, post.markdown.lastIndexOf("/"))}`;
     body.innerHTML = markdownToHtml(markdown, markdownBase);
 
+    buildArticleOutline(body);
+    enhanceCodeBlocks(body);
+
     if (window.Prism?.highlightAllUnder) {
         window.Prism.highlightAllUnder(body);
     }
@@ -442,6 +628,3 @@ async function init() {
 }
 
 init();
-
-
-

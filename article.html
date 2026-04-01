@@ -38,8 +38,18 @@
         </nav>
     </header>
 
-    <main class="container article-page">
-        <article class="article">
+    <main class="container article-page article-page-wide">
+        <aside class="sidebar sidebar-left">
+            <div class="sidebar-section">
+                <h3>文章信息</h3>
+                <ul class="sidebar-list" id="article-info"></ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>继续阅读</h3>
+                <ul class="sidebar-list" id="related-posts"></ul>
+            </div>
+        </aside>
+        <article class="article article-readable">
             <div class="article-header">
                 <p class="breadcrumb"><a href="index.html">Home</a> / <a id="article-category-link" href="index.html#categories">分类</a> / <span id="article-title-breadcrumb">文章</span></p>
                 <h1 id="article-title">文章加载中...</h1>
@@ -50,14 +60,17 @@
             </div>
             <nav class="article-pagination" id="article-pagination" aria-label="上一篇下一篇"></nav>
         </article>
-        <aside class="sidebar">
-            <div class="sidebar-section">
-                <h3>文章信息</h3>
-                <ul class="sidebar-list" id="article-info"></ul>
+        <aside class="sidebar sidebar-right">
+            <div class="sidebar-section outline-section">
+                <h3>文章大纲</h3>
+                <ul class="sidebar-list outline-list" id="article-outline"></ul>
             </div>
             <div class="sidebar-section">
-                <h3>继续阅读</h3>
-                <ul class="sidebar-list" id="related-posts"></ul>
+                <h3>阅读提示</h3>
+                <ul class="sidebar-list">
+                    <li>点击右侧标题可以定位到对应章节。</li>
+                    <li>代码块右上角支持一键复制。</li>
+                </ul>
             </div>
         </aside>
     </main>
@@ -67,6 +80,12 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
-    <script src="assets/site.js?v=20260402b"></script>
+    <script>
+        Prism.plugins = Prism.plugins || {};
+        Prism.plugins.autoloader = Prism.plugins.autoloader || {};
+        Prism.plugins.autoloader.languages_path = "https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/";
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="assets/site.js?v=20260402c"></script>
 </body>
 </html>
