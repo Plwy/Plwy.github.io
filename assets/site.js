@@ -1,9 +1,10 @@
 const CACHE_BUSTER = "20260401b";
+const ARTICLE_REPO_BASE = "https://raw.githubusercontent.com/Plwy/plwy-articles/main";
 
 async function loadSiteData() {
     const [postsResponse, categoriesResponse] = await Promise.all([
-        fetch(`content/posts.json?v=${CACHE_BUSTER}`),
-        fetch(`content/categories.json?v=${CACHE_BUSTER}`)
+        fetch(`${ARTICLE_REPO_BASE}/posts.json?v=${CACHE_BUSTER}`),
+        fetch(`${ARTICLE_REPO_BASE}/categories.json?v=${CACHE_BUSTER}`)
     ]);
     if (!postsResponse.ok) throw new Error("无法读取文章索引");
     if (!categoriesResponse.ok) throw new Error("无法读取分类索引");
@@ -215,7 +216,7 @@ async function renderArticle(posts) {
         <li><a href="article.html?slug=${item.slug}">${item.title}</a></li>
     `).join("") || "<li>这个分类下暂时没有更多文章。</li>";
 
-    const response = await fetch(post.markdown);
+    const response = await fetch(`${ARTICLE_REPO_BASE}/${post.markdown}?v=${CACHE_BUSTER}`);
     if (!response.ok) {
         body.innerHTML = "<p>Markdown 正文读取失败。</p>";
         return;
