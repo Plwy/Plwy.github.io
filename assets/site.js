@@ -1,4 +1,4 @@
-const CACHE_BUSTER = "20260402a";
+const CACHE_BUSTER = "20260402b";
 const ARTICLE_REPO_BASE = "https://raw.githubusercontent.com/Plwy/plwy-articles/main";
 const DEFAULT_OG_IMAGE = "https://plwy.github.io/images/hero-bg.jpg";
 
@@ -13,10 +13,27 @@ function escapeHtml(value) {
         .replaceAll(">", "&gt;");
 }
 
-function parseInlineMarkdown(text) {
+function parseInlineMarkdown(text, assetBase = ARTICLE_REPO_BASE) {
     return escapeHtml(text)
+        .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, path) => {
+            const url = resolveAssetUrl(path, assetBase);
+            return `<img src="${url}" alt="${alt}">`;
+        })
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, path) => {
+            const url = resolveAssetUrl(path, assetBase);
+            const external = /^https?:\/\//i.test(url);
+            return `<a href="${url}"${external ? ' target="_blank" rel="noreferrer"' : ""}>${label}</a>`;
+        })
         .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
         .replace(/`([^`]+)`/g, "<code>$1</code>");
+}
+
+function resolveAssetUrl(path, assetBase = ARTICLE_REPO_BASE) {
+    if (!path) return "";
+    if (/^(https?:)?\/\//i.test(path) || path.startsWith("data:")) return path;
+    const trimmedBase = assetBase.replace(/\/$/, "");
+    const normalizedPath = path.replace(/^\.\//, "").replace(/^\//, "");
+    return `${trimmedBase}/${normalizedPath}`;
 }
 
 function setMetaContent(selector, key, value) {
@@ -86,7 +103,7 @@ function normalizeLanguage(language) {
     return normalized;
 }
 
-function markdownToHtml(markdown) {
+function markdownToHtml(markdown, assetBase = ARTICLE_REPO_BASE) {
     const lines = markdown.replace(/\r\n/g, "\n").split("\n");
     const html = [];
     let inList = false;
@@ -131,19 +148,19 @@ function markdownToHtml(markdown) {
 
         if (line.startsWith("### ")) {
             closeList();
-            html.push(`<h3>${parseInlineMarkdown(line.slice(4))}</h3>`);
+            html.push(`<h3>${parseInlineMarkdown(line.slice(4), assetBase)}</h3>`);
             continue;
         }
 
         if (line.startsWith("## ")) {
             closeList();
-            html.push(`<h2>${parseInlineMarkdown(line.slice(3))}</h2>`);
+            html.push(`<h2>${parseInlineMarkdown(line.slice(3), assetBase)}</h2>`);
             continue;
         }
 
         if (line.startsWith("# ")) {
             closeList();
-            html.push(`<h1>${parseInlineMarkdown(line.slice(2))}</h1>`);
+            html.push(`<h1>${parseInlineMarkdown(line.slice(2), assetBase)}</h1>`);
             continue;
         }
 
@@ -154,7 +171,7 @@ function markdownToHtml(markdown) {
                 listType = "ul";
                 html.push("<ul>");
             }
-            html.push(`<li>${parseInlineMarkdown(line.slice(2))}</li>`);
+            html.push(`<li>${parseInlineMarkdown(line.slice(2), assetBase)}</li>`);
             continue;
         }
 
@@ -165,12 +182,12 @@ function markdownToHtml(markdown) {
                 listType = "ol";
                 html.push("<ol>");
             }
-            html.push(`<li>${parseInlineMarkdown(line.replace(/^\d+\.\s/, ""))}</li>`);
+            html.push(`<li>${parseInlineMarkdown(line.replace(/^\d+\.\s/, ""), assetBase)}</li>`);
             continue;
         }
 
         closeList();
-        html.push(`<p>${parseInlineMarkdown(line)}</p>`);
+        html.push(`<p>${parseInlineMarkdown(line, assetBase)}</p>`);
     }
 
     closeList();
@@ -179,8 +196,8 @@ function markdownToHtml(markdown) {
 
 async function loadSiteData() {
     const [postsResponse, categoriesResponse] = await Promise.all([
-        fetch(`${ARTICLE_REPO_BASE}/posts.json?v=${CACHE_BUSTER}`),
-        fetch(`${ARTICLE_REPO_BASE}/categories.json?v=${CACHE_BUSTER}`)
+        fetch(`${ARTICLE_REPO_BASE}/posts.json?v=${CACHE_BUSTER}`, { cache: "no-store" }),
+        fetch(`${ARTICLE_REPO_BASE}/categories.json?v=${CACHE_BUSTER}`, { cache: "no-store" })
     ]);
 
     if (!postsResponse.ok) throw new Error("无法读取文章索引");
@@ -381,14 +398,15 @@ async function renderArticle(posts) {
         ? related.map((item) => `<li><a href="article.html?slug=${item.slug}">${item.title}</a></li>`).join("")
         : "<li>这个分类下暂时没有更多文章。</li>";
 
-    const response = await fetch(`${ARTICLE_REPO_BASE}/${post.markdown}?v=${CACHE_BUSTER}`);
+    const response = await fetch(`${ARTICLE_REPO_BASE}/${post.markdown}?v=${CACHE_BUSTER}`, { cache: "no-store" });
     if (!response.ok) {
         body.innerHTML = "<p>Markdown 正文读取失败。</p>";
         return;
     }
 
     const markdown = await response.text();
-    body.innerHTML = markdownToHtml(markdown);
+    const markdownBase = `${ARTICLE_REPO_BASE}/${post.markdown.substring(0, post.markdown.lastIndexOf("/"))}`;
+    body.innerHTML = markdownToHtml(markdown, markdownBase);
 
     if (window.Prism?.highlightAllUnder) {
         window.Prism.highlightAllUnder(body);
@@ -424,3 +442,6 @@ async function init() {
 }
 
 init();
+
+
+
