@@ -1,8 +1,9 @@
-﻿const CACHE_BUSTER = "20260402d";
+const CACHE_BUSTER = "20260402e";
 const ARTICLE_REPO_BASE = "https://raw.githubusercontent.com/Plwy/plwy-articles/main";
 const DEFAULT_OG_IMAGE = "https://plwy.github.io/images/hero-bg.jpg";
 const HOME_PAGE_SIZE = 8;
 const CATEGORY_PAGE_SIZE = 10;
+const SIDEBAR_LATEST_COUNT = 5;
 
 function getQueryParam(name) {
     return new URLSearchParams(window.location.search).get(name);
@@ -372,9 +373,10 @@ function buildArticleOutline(container) {
     const outline = document.getElementById("article-outline");
     if (!outline) return;
 
+    // 选择 h2 和 h3 标题
     const headings = [...container.querySelectorAll("h2, h3")];
     if (!headings.length) {
-        outline.innerHTML = "<li>这篇文章暂时没有二级标题。</li>";
+        outline.innerHTML = "<li>这篇文章暂时没有标题。</li>";
         return;
     }
 
@@ -388,11 +390,11 @@ function buildArticleOutline(container) {
         heading.id = id;
     });
 
-    outline.innerHTML = headings.map((heading) => `
-        <li class="outline-level-${heading.tagName.toLowerCase() === "h2" ? "2" : "3"}">
-            <a href="#${heading.id}">${heading.textContent}</a>
-        </li>
-    `).join("");
+    outline.innerHTML = headings.map((heading) => {
+        const level = parseInt(heading.tagName[1]);
+        const className = `outline-level-${level}`;
+        return `<li class="${className}"><a href="#${heading.id}">${heading.textContent}</a></li>`;
+    }).join("");
 }
 
 function rewriteRenderedAssets(container, assetBase) {
@@ -438,6 +440,8 @@ function renderMarkdownArticle(markdown, assetBase) {
 
 function renderHome(posts, categories) {
     const categoryGrid = document.getElementById("category-grid");
+    const categoryPrevBtn = document.getElementById("category-prev");
+    const categoryNextBtn = document.getElementById("category-next");
     const latestPosts = document.getElementById("latest-posts");
     const tagTabs = document.getElementById("home-tag-tabs");
     const pagination = document.getElementById("home-pagination");
@@ -445,6 +449,29 @@ function renderHome(posts, categories) {
     const allPosts = sortPosts(posts);
     let activeTag = "all";
     let currentPage = 1;
+
+    const setupCategoryScroll = () => {
+        if (!categoryGrid || !categoryPrevBtn || !categoryNextBtn) return;
+        const scrollAmount = 520; // 约2列的宽度 (250px + gap) * 2
+        
+        const updateButtonState = () => {
+            categoryPrevBtn.disabled = categoryGrid.scrollLeft <= 0;
+            categoryNextBtn.disabled = categoryGrid.scrollLeft >= categoryGrid.scrollWidth - categoryGrid.clientWidth - 10;
+        };
+
+        categoryPrevBtn.addEventListener("click", () => {
+            categoryGrid.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+            setTimeout(updateButtonState, 100);
+        });
+
+        categoryNextBtn.addEventListener("click", () => {
+            categoryGrid.scrollBy({ left: scrollAmount, behavior: "smooth" });
+            setTimeout(updateButtonState, 100);
+        });
+
+        categoryGrid.addEventListener("scroll", updateButtonState);
+        updateButtonState();
+    };
 
     const renderFiltered = (query) => {
         const filteredCategories = allCategories.filter((category) => matchesCategory(category, query));
@@ -468,6 +495,7 @@ function renderHome(posts, categories) {
             `).join("")
             : '<div class="empty-state">没有匹配到分类结果。</div>';
 
+        setupCategoryScroll();
         renderTagTabs(tagTabs, tags, activeTag);
         renderPager(pagination, paged.page, paged.totalPages);
 
@@ -607,21 +635,35 @@ async function renderArticle(posts) {
     categoryLink.textContent = post.category.name;
     categoryLink.href = `category.html?slug=${post.category.slug}`;
 
+    // 文章信息栏
     document.getElementById("article-info").innerHTML = `
         <li>分类：${post.category.name}</li>
         <li>日期：${post.date}</li>
-        <li>标签：${post.tags?.length ? post.tags.join(" / ") : "未设置"}</li>
-        <li>来源：${post.markdown}</li>
+        <li>标签：${post.tags?.length ? post.tags.map(tag => `<a href="tag.html?tag=${encodeURIComponent(tag)}" class="tag-link">${tag}</a>`).join(" / ") : "未设置"}</li>
     `;
 
+    // 最新文章列表（右侧第二栏）
+    const latestPostsMini = document.getElementById("latest-posts-mini");
+    if (latestPostsMini) {
+        const latestFive = orderedPosts.slice(0, SIDEBAR_LATEST_COUNT);
+        latestPostsMini.innerHTML = latestFive.map((item) => `
+            <li><a href="article.html?slug=${item.slug}">${item.title}</a></li>
+        `).join("");
+    }
+
+    // 继续阅读 - 同分类文章（右侧第三栏）
     const related = orderedPosts
         .filter((item) => item.category.slug === post.category.slug && item.slug !== post.slug)
-        .slice(0, 4);
+        .slice(0, 5);
 
-    document.getElementById("related-posts").innerHTML = related.length
-        ? related.map((item) => `<li><a href="article.html?slug=${item.slug}">${item.title}</a></li>`).join("")
-        : "<li>这个分类下暂时没有更多文章。</li>";
+    const relatedContainer = document.getElementById("related-posts");
+    if (relatedContainer) {
+        relatedContainer.innerHTML = related.length
+            ? related.map((item) => `<li><a href="article.html?slug=${item.slug}">${item.title}</a></li>`).join("")
+            : "<li>这个分类下暂时没有更多文章。</li>";
+    }
 
+    // 加载 Markdown 正文
     const response = await fetch(`${ARTICLE_REPO_BASE}/${post.markdown}?v=${CACHE_BUSTER}`, { cache: "no-store" });
     if (!response.ok) {
         body.innerHTML = "<p>Markdown 正文读取失败。</p>";
@@ -633,6 +675,7 @@ async function renderArticle(posts) {
     body.innerHTML = renderMarkdownArticle(markdown, markdownBase);
     rewriteRenderedAssets(body, markdownBase);
 
+    // 构建大纲（只包含 h2）
     buildArticleOutline(body);
     enhanceCodeBlocks(body);
 
@@ -640,12 +683,82 @@ async function renderArticle(posts) {
         window.Prism.highlightAllUnder(body);
     }
 
+    // 上下篇导航
     renderArticlePagination(orderedPosts, currentIndex);
+
+    // 设置文章链接
+    const articleUrlElement = document.getElementById("article-url");
+    if (articleUrlElement) {
+        // 本地测试时使用公网链接，部署后使用当前域名
+        const isLocal = window.location.protocol === "file:";
+        const baseUrl = isLocal ? "https://plwy.github.io" : window.location.origin;
+        const articleUrl = `${baseUrl}/article.html?slug=${post.slug}`;
+        articleUrlElement.href = articleUrl;
+        articleUrlElement.textContent = articleUrl;
+    }
+
+    // 更新 SEO
     updateSeoMeta({
         title: `${post.title} | 侧耳倾听`,
         description: post.excerpt || `阅读 ${post.title}`,
         url: window.location.href,
         type: "article"
+    });
+}
+
+function renderTag(posts) {
+    const tag = getQueryParam("tag");
+    const title = document.getElementById("tag-title");
+    const breadcrumb = document.getElementById("tag-breadcrumb");
+    const list = document.getElementById("tag-posts");
+    const tagSearch = document.getElementById("tag-search");
+    const pagination = document.getElementById("tag-pagination");
+
+    if (!tag) {
+        title.textContent = "未指定标签";
+        list.innerHTML = '<div class="empty-state">请指定要查看的标签。</div>';
+        updateSeoMeta({
+            title: "标签 | 侧耳倾听",
+            description: "查看标签下的文章列表。",
+            url: window.location.href
+        });
+        return;
+    }
+
+    const taggedPosts = sortPosts(posts.filter((post) => (post.tags || []).includes(tag)));
+    title.textContent = `#${tag}`;
+    breadcrumb.textContent = `#${tag}`;
+
+    updateSeoMeta({
+        title: `#${tag} | 侧耳倾听`,
+        description: `查看标签"${tag}"下的 ${taggedPosts.length} 篇文章。`,
+        url: window.location.href
+    });
+
+    let currentPage = 1;
+
+    const renderFiltered = (query) => {
+        const queryPosts = taggedPosts.filter((post) => matchesPost(post, query));
+        const paged = paginatePosts(queryPosts, currentPage, CATEGORY_PAGE_SIZE);
+        currentPage = paged.page;
+
+        list.innerHTML = queryPosts.length
+            ? renderPostList(paged.items)
+            : '<div class="empty-state">这个标签下没有匹配到文章。</div>';
+
+        renderPager(pagination, paged.page, paged.totalPages);
+    };
+
+    pagination?.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-page]");
+        if (!button || button.disabled) return;
+        currentPage = Number(button.dataset.page || "1");
+        renderFiltered(tagSearch?.value.trim().toLowerCase() || "");
+    });
+
+    setupSearch("tag-search", (query) => {
+        currentPage = 1;
+        renderFiltered(query);
     });
 }
 
@@ -660,6 +773,7 @@ async function init() {
 
         if (page === "home") renderHome(posts, categories);
         if (page === "category") renderCategory(posts, categories);
+        if (page === "tag") renderTag(posts);
         if (page === "article") await renderArticle(posts);
     } catch (error) {
         const fallback = document.createElement("div");
@@ -670,7 +784,3 @@ async function init() {
 }
 
 init();
-
-
-
-

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>标签 | 侧耳倾听</title>
+    <meta name="description" content="查看标签下的文章列表。">
+    <meta property="og:title" content="标签 | 侧耳倾听">
+    <meta property="og:description" content="查看标签下的文章列表。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://plwy.github.io/tag.html">
+    <meta property="og:image" content="https://plwy.github.io/images/hero-bg.jpg">
+    <meta name="theme-color" content="#f7f5ee">
+    <script>
+        (function () {
+            const storedTheme = localStorage.getItem("theme");
+            if (storedTheme === "dark") {
+                document.documentElement.setAttribute("data-theme", "dark");
+            }
+        })();
+    </script>
+    <link rel="stylesheet" href="assets/site.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body data-page="tag">
+    <header class="site-header">
+        <nav>
+            <div class="nav-container">
+                <a href="index.html" class="logo"><span class="logo-text">侧耳倾听</span><span class="logo-clover">☘</span></a>
+                <ul class="nav-links">
+                    <li><a href="index.html"><span class="nav-icon" aria-hidden="true">🏠</span><span>Home</span></a></li>
+                    <li><a href="index.html#categories"><span class="nav-icon" aria-hidden="true">📂</span><span>Categories</span></a></li>
+                    <li><a href="index.html#posts"><span class="nav-icon" aria-hidden="true">📝</span><span>Posts</span></a></li>
+                    <li><a href="about.html"><span class="nav-icon" aria-hidden="true">👤</span><span>About</span></a></li>
+                </ul>
+                <button class="theme-toggle" id="theme-toggle" type="button" aria-label="切换深色模式">◐</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="subpage-container">
+        <div class="container">
+            <div class="section-title section-title-left">
+                <p class="breadcrumb"><a href="index.html">Home</a> / <span id="tag-breadcrumb">标签</span></p>
+                <h2 id="tag-title">标签</h2>
+            </div>
+
+            <div class="list-shell list-shell-left">
+                <div class="search-bar search-bar-left">
+                    <input id="tag-search" class="search-input" type="search" placeholder="搜索标题、摘要..." aria-label="搜索文章">
+                </div>
+                <div class="post-list" id="tag-posts"></div>
+                <div class="pagination pagination-left" id="tag-pagination"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 侧耳倾听</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+    <script src="assets/site.js?v=20260402e"></script>
+</body>
+</html>
