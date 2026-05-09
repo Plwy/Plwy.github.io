@@ -500,9 +500,19 @@ a { color: inherit; }
     padding-bottom: 0.3em;
 }
 .article-body h3 { font-size: 1.2rem; }
-.article-body p { margin: 1em 0; color: var(--text-soft); }
+.article-body p {
+    margin: 1em 0;
+    color: var(--text-soft);
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
 .article-body ul, .article-body ol { margin: 1em 0; padding-left: 2em; }
-.article-body li { margin: 0.5em 0; color: var(--text-soft); }
+.article-body li {
+    margin: 0.5em 0;
+    color: var(--text-soft);
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
 .article-body pre { padding: 18px 20px; border-radius: 0 0 16px 16px; overflow-x: auto; margin: 0; background: var(--code-surface); color: var(--code-text); border: 1px solid var(--code-border); border-top: none; }
 .article-body { font-size: 1.03rem; }
 .article-body blockquote {
@@ -524,7 +534,9 @@ a { color: inherit; }
     border: 1px solid var(--border);
     padding: 0.8rem 0.9rem;
     text-align: left;
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 .article-body th {
     background: var(--surface-2);
@@ -1112,7 +1124,11 @@ footer {
 .about-page-text a { color: var(--brand); text-decoration: none; font-weight: 700; }
 
 /* ========== Links & Images ========== */
-.article-body a { color: var(--brand); }
+.article-body a {
+    color: var(--brand);
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
 .article-body img { max-width: 100%; height: auto; display: block; margin: 1.25rem auto; border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 10px 24px rgba(0,0,0,0.08); }
 
 /* ========== Responsive ========== */
