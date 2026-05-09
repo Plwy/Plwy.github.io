@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>侧耳倾听 | 技术博客</title>
-    <meta name="description" content="侧耳倾听，整理论文、工程、部署与日常记录的个人知识花园。">
+    <meta name="description" content="整理论文、工程、部署与日常记录的个人知识花园。">
     <meta property="og:title" content="侧耳倾听 | 技术博客">
     <meta property="og:description" content="整理论文、工程、部署与日常记录的个人知识花园。">
     <meta property="og:type" content="website">
@@ -20,7 +20,7 @@
         })();
     </script>
     <link rel="stylesheet" href="assets/site.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+    <link id="prism-theme" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css">
 </head>
 <body data-page="home">
     <header class="site-header">
@@ -28,8 +28,8 @@
             <div class="nav-container">
                 <a href="index.html" class="logo"><span class="logo-text">侧耳倾听</span><span class="logo-clover">☘</span></a>
                 <ul class="nav-links">
-                    <li><a href="#home"><span class="nav-icon" aria-hidden="true">🏠</span><span>Home</span></a></li>
-                    <li><a href="#categories"><span class="nav-icon" aria-hidden="true">📂</span><span>Categories</span></a></li>
+                    <li><a href="#home"><span class="nav-icon" aria-hidden="true">🏔</span><span>Home</span></a></li>
+                    <li><a href="#categories"><span class="nav-icon" aria-hidden="true">📚</span><span>Categories</span></a></li>
                     <li><a href="#posts"><span class="nav-icon" aria-hidden="true">📝</span><span>Posts</span></a></li>
                     <li><a href="about.html"><span class="nav-icon" aria-hidden="true">👤</span><span>About</span></a></li>
                 </ul>
@@ -56,13 +56,20 @@
         </div>
     </section>
 
+    <section class="container section-soft" id="featured">
+        <div class="section-title">
+            <h2>精品文章</h2>
+        </div>
+        <div class="featured-grid" id="featured-posts"></div>
+    </section>
+
     <section class="container section-soft" id="posts">
         <div class="section-title">
             <h2>最新文章</h2>
         </div>
         <div class="list-shell">
             <div class="search-bar">
-                <input id="home-search" class="search-input" type="search" placeholder="搜索标题、摘要、分类..." aria-label="搜索文章和分类">
+                <input id="home-search" class="search-input" type="search" placeholder="搜索标题、摘要、分类、标签..." aria-label="搜索文章和分类">
             </div>
             <div class="tag-tabs" id="home-tag-tabs"></div>
             <div class="post-list" id="latest-posts"></div>
@@ -75,6 +82,6 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
-    <script src="assets/site.js?v=20260402e"></script>
+    <script src="assets/site.js?v=20260509a"></script>
 </body>
 </html>

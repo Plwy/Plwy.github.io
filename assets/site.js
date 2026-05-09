@@ -1,39 +1,33 @@
-const CACHE_BUSTER = "20260402e";
+const CACHE_BUSTER = "20260509a";
 const ARTICLE_REPO_BASE = "https://raw.githubusercontent.com/Plwy/plwy-articles/main";
 const DEFAULT_OG_IMAGE = "https://plwy.github.io/images/hero-bg.jpg";
 const HOME_PAGE_SIZE = 8;
 const CATEGORY_PAGE_SIZE = 10;
 const SIDEBAR_LATEST_COUNT = 5;
+const VIEW_COUNTER_NAMESPACE = "plwy-github-io";
+const PRISM_LIGHT_THEME = "https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css";
+const PRISM_DARK_THEME = "https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css";
 
 function getQueryParam(name) {
     return new URLSearchParams(window.location.search).get(name);
 }
 
-function escapeHtml(value) {
-    return value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;");
+function getPublicBaseUrl() {
+    return window.location.protocol === "file:" ? "https://plwy.github.io" : window.location.origin;
 }
 
-function parseInlineMarkdown(text, assetBase = ARTICLE_REPO_BASE) {
-    return escapeHtml(text)
-        .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, path) => {
-            const url = resolveAssetUrl(path, assetBase);
-            return `<img src="${url}" alt="${alt}">`;
-        })
-        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, path) => {
-            const url = resolveAssetUrl(path, assetBase);
-            const external = /^https?:\/\//i.test(url);
-            return `<a href="${url}"${external ? ' target="_blank" rel="noreferrer"' : ""}>${label}</a>`;
-        })
-        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-        .replace(/`([^`]+)`/g, "<code>$1</code>");
+function escapeHtml(value = "") {
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
 }
 
 function resolveAssetUrl(path, assetBase = ARTICLE_REPO_BASE) {
     if (!path) return "";
     if (/^(https?:)?\/\//i.test(path) || path.startsWith("data:")) return path;
+    if (path.startsWith("#")) return path;
     const trimmedBase = assetBase.replace(/\/$/, "");
     const normalizedPath = path.replace(/^\.\//, "").replace(/^\//, "");
     return `${trimmedBase}/${normalizedPath}`;
@@ -44,7 +38,8 @@ function setMetaContent(selector, key, value) {
     let tag = document.head.querySelector(selector);
     if (!tag) {
         tag = document.createElement("meta");
-        tag.setAttribute(key, selector.match(/"(.*?)"/)[1]);
+        const match = selector.match(/"(.*?)"/);
+        if (match) tag.setAttribute(key, match[1]);
         document.head.appendChild(tag);
     }
     tag.setAttribute("content", value);
@@ -64,6 +59,13 @@ function updateSeoMeta({ title, description, url, type = "website", image = DEFA
     setMetaContent('meta[property="og:image"]', "property", image);
 }
 
+function syncPrismTheme() {
+    const link = document.getElementById("prism-theme");
+    if (!link) return;
+    const dark = document.documentElement.getAttribute("data-theme") === "dark";
+    link.href = dark ? PRISM_DARK_THEME : PRISM_LIGHT_THEME;
+}
+
 function setupThemeToggle() {
     const root = document.documentElement;
     const button = document.getElementById("theme-toggle");
@@ -72,129 +74,30 @@ function setupThemeToggle() {
         root.setAttribute("data-theme", "dark");
     }
 
-    if (!button) return;
-
     const syncButton = () => {
         const dark = root.getAttribute("data-theme") === "dark";
-        button.textContent = dark ? "☀" : "◐";
-        button.setAttribute("aria-label", dark ? "切换浅色模式" : "切换深色模式");
+        if (button) {
+            button.textContent = dark ? "☀" : "◐";
+            button.setAttribute("aria-label", dark ? "切换浅色模式" : "切换深色模式");
+        }
+        syncPrismTheme();
     };
 
-    button.addEventListener("click", () => {
-        const dark = root.getAttribute("data-theme") === "dark";
-        if (dark) {
-            root.removeAttribute("data-theme");
-            localStorage.setItem("theme", "light");
-        } else {
-            root.setAttribute("data-theme", "dark");
-            localStorage.setItem("theme", "dark");
-        }
-        syncButton();
-    });
-
-    syncButton();
-}
-
-function normalizeLanguage(language) {
-    if (!language) return "plaintext";
-    const normalized = language.toLowerCase();
-    if (normalized === "c++") return "cpp";
-    if (normalized === "py") return "python";
-    if (normalized === "js") return "javascript";
-    if (normalized === "ts") return "typescript";
-    if (normalized === "sh") return "bash";
-    return normalized;
-}
-
-function markdownToHtml(markdown, assetBase = ARTICLE_REPO_BASE) {
-    const lines = markdown.replace(/\r\n/g, "\n").split("\n");
-    const html = [];
-    let inList = false;
-    let listType = "";
-    let inCode = false;
-    let codeLanguage = "plaintext";
-
-    const closeList = () => {
-        if (inList) {
-            html.push(`</${listType}>`);
-            inList = false;
-            listType = "";
-        }
-    };
-
-    for (const rawLine of lines) {
-        const line = rawLine.trimEnd();
-
-        if (line.startsWith("```")) {
-            closeList();
-            if (!inCode) {
-                inCode = true;
-                codeLanguage = normalizeLanguage(line.slice(3).trim());
-                html.push(`<pre class="language-${codeLanguage}"><code class="language-${codeLanguage}">`);
+    if (button) {
+        button.addEventListener("click", () => {
+            const dark = root.getAttribute("data-theme") === "dark";
+            if (dark) {
+                root.removeAttribute("data-theme");
+                localStorage.setItem("theme", "light");
             } else {
-                inCode = false;
-                codeLanguage = "plaintext";
-                html.push("</code></pre>");
+                root.setAttribute("data-theme", "dark");
+                localStorage.setItem("theme", "dark");
             }
-            continue;
-        }
-
-        if (inCode) {
-            html.push(`${escapeHtml(rawLine)}\n`);
-            continue;
-        }
-
-        if (!line.trim()) {
-            closeList();
-            continue;
-        }
-
-        if (line.startsWith("### ")) {
-            closeList();
-            html.push(`<h3>${parseInlineMarkdown(line.slice(4), assetBase)}</h3>`);
-            continue;
-        }
-
-        if (line.startsWith("## ")) {
-            closeList();
-            html.push(`<h2>${parseInlineMarkdown(line.slice(3), assetBase)}</h2>`);
-            continue;
-        }
-
-        if (line.startsWith("# ")) {
-            closeList();
-            html.push(`<h1>${parseInlineMarkdown(line.slice(2), assetBase)}</h1>`);
-            continue;
-        }
-
-        if (/^- /.test(line)) {
-            if (!inList || listType !== "ul") {
-                closeList();
-                inList = true;
-                listType = "ul";
-                html.push("<ul>");
-            }
-            html.push(`<li>${parseInlineMarkdown(line.slice(2), assetBase)}</li>`);
-            continue;
-        }
-
-        if (/^\d+\.\s/.test(line)) {
-            if (!inList || listType !== "ol") {
-                closeList();
-                inList = true;
-                listType = "ol";
-                html.push("<ol>");
-            }
-            html.push(`<li>${parseInlineMarkdown(line.replace(/^\d+\.\s/, ""), assetBase)}</li>`);
-            continue;
-        }
-
-        closeList();
-        html.push(`<p>${parseInlineMarkdown(line, assetBase)}</p>`);
+            syncButton();
+        });
     }
 
-    closeList();
-    return html.join("");
+    syncButton();
 }
 
 async function loadSiteData() {
@@ -203,8 +106,8 @@ async function loadSiteData() {
         fetch(`${ARTICLE_REPO_BASE}/categories.json?v=${CACHE_BUSTER}`, { cache: "no-store" })
     ]);
 
-    if (!postsResponse.ok) throw new Error("无法读取文章索引");
-    if (!categoriesResponse.ok) throw new Error("无法读取分类索引");
+    if (!postsResponse.ok) throw new Error("无法读取文章索引。");
+    if (!categoriesResponse.ok) throw new Error("无法读取分类索引。");
 
     return {
         posts: await postsResponse.json(),
@@ -212,28 +115,10 @@ async function loadSiteData() {
     };
 }
 
-function renderTags(tags) {
-    if (!tags?.length) return "";
-    return `<div class="tag-list">${tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}</div>`;
-}
-
-function buildCategorySummary(posts, categories) {
-    const summary = {};
-    for (const category of categories) {
-        summary[category.slug] = { ...category, count: 0 };
-    }
-    for (const post of posts) {
-        if (summary[post.category.slug]) {
-            summary[post.category.slug].count += 1;
-        }
-    }
-    return Object.values(summary);
-}
-
 function sortPosts(posts) {
     return posts.slice().sort((a, b) => {
-        const dateCompare = b.date.localeCompare(a.date);
-        return dateCompare || a.slug.localeCompare(b.slug);
+        const dateCompare = String(b.date || "").localeCompare(String(a.date || ""));
+        return dateCompare || String(a.slug || "").localeCompare(String(b.slug || ""));
     });
 }
 
@@ -252,51 +137,17 @@ function paginatePosts(posts, currentPage, pageSize) {
     };
 }
 
-function renderPostList(posts) {
-    return posts.map((post) => `
-        <a class="post-card" href="article.html?slug=${post.slug}">
-            <div class="card-meta">${post.date} · ${post.category.name}</div>
-            <h3>${post.title}</h3>
-            <p>${post.excerpt || ""}</p>
-            ${renderTags(post.tags)}
-        </a>
-    `).join("");
-}
-
-function renderTagTabs(container, tags, activeTag) {
-    if (!container) return;
-    const allTags = ["全部", ...tags];
-    container.innerHTML = allTags.map((tag) => {
-        const value = tag === "全部" ? "all" : tag;
-        return `<button class="tag-tab${value === activeTag ? " is-active" : ""}" type="button" data-tag="${value}">${tag}</button>`;
-    }).join("");
-}
-
-function renderPager(container, currentPage, totalPages) {
-    if (!container) return;
-    if (totalPages <= 1) {
-        container.innerHTML = "";
-        return;
-    }
-
-    const pages = [];
-    for (let page = 1; page <= totalPages; page += 1) {
-        pages.push(`<button class="pagination-button${page === currentPage ? " is-active" : ""}" type="button" data-page="${page}">${page}</button>`);
-    }
-
-    container.innerHTML = `
-        <button class="pagination-button" type="button" data-page="${currentPage - 1}" ${currentPage === 1 ? "disabled" : ""}>上一页</button>
-        ${pages.join("")}
-        <button class="pagination-button" type="button" data-page="${currentPage + 1}" ${currentPage === totalPages ? "disabled" : ""}>下一页</button>
-    `;
-}
-
-function setupSearch(inputId, onFilter) {
-    const input = document.getElementById(inputId);
-    if (!input) return;
-    const applyFilter = () => onFilter(input.value.trim().toLowerCase());
-    input.addEventListener("input", applyFilter);
-    applyFilter();
+function buildCategorySummary(posts, categories) {
+    const summary = {};
+    categories.forEach((category) => {
+        summary[category.slug] = { ...category, count: 0 };
+    });
+    posts.forEach((post) => {
+        if (summary[post.category.slug]) {
+            summary[post.category.slug].count += 1;
+        }
+    });
+    return Object.values(summary);
 }
 
 function matchesCategory(category, query) {
@@ -323,12 +174,308 @@ function matchesPost(post, query) {
         .includes(query);
 }
 
+function renderTagLinks(tags, { linked = true } = {}) {
+    if (!tags?.length) return "";
+    return `
+        <div class="tag-list">
+            ${tags.map((tag) => linked
+                ? `<a class="tag tag-link" href="tag.html?tag=${encodeURIComponent(tag)}">${escapeHtml(tag)}</a>`
+                : `<span class="tag">${escapeHtml(tag)}</span>`).join("")}
+        </div>
+    `;
+}
+
+function renderInlineTagLinks(tags) {
+    if (!tags?.length) return "未设置";
+    return tags.map((tag) => `<a class="tag-link" href="tag.html?tag=${encodeURIComponent(tag)}">${escapeHtml(tag)}</a>`).join(" ");
+}
+
+function renderPostList(posts) {
+    return posts.map((post) => `
+        <a class="post-card" href="article.html?slug=${encodeURIComponent(post.slug)}">
+            <div class="card-meta">${escapeHtml(post.date || "")} · ${escapeHtml(post.category?.name || "")}</div>
+            <h3>${escapeHtml(post.title || "未命名文章")}${post.featured ? '<span class="featured-badge">精品</span>' : ""}</h3>
+            <p>${escapeHtml(post.excerpt || "")}</p>
+            ${renderTagLinks(post.tags)}
+        </a>
+    `).join("");
+}
+
+function renderTagTabs(container, tags, activeTag) {
+    if (!container) return;
+    const allTags = ["全部", ...tags];
+    container.innerHTML = allTags.map((tag) => {
+        const value = tag === "全部" ? "all" : tag;
+        return `<button class="tag-tab${value === activeTag ? " is-active" : ""}" type="button" data-tag="${escapeHtml(value)}">${escapeHtml(tag)}</button>`;
+    }).join("");
+}
+
+function renderPager(container, currentPage, totalPages) {
+    if (!container) return;
+    if (totalPages <= 1) {
+        container.innerHTML = "";
+        return;
+    }
+
+    const buttons = [];
+    for (let page = 1; page <= totalPages; page += 1) {
+        buttons.push(`<button class="pagination-button${page === currentPage ? " is-active" : ""}" type="button" data-page="${page}">${page}</button>`);
+    }
+
+    container.innerHTML = `
+        <button class="pagination-button" type="button" data-page="${currentPage - 1}" ${currentPage === 1 ? "disabled" : ""}>上一页</button>
+        ${buttons.join("")}
+        <button class="pagination-button" type="button" data-page="${currentPage + 1}" ${currentPage === totalPages ? "disabled" : ""}>下一页</button>
+    `;
+}
+
+function setupSearch(inputId, onFilter) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    const applyFilter = () => onFilter(input.value.trim().toLowerCase());
+    input.addEventListener("input", applyFilter);
+    applyFilter();
+}
+
+function setupCategoryScroll() {
+    const categoryGrid = document.getElementById("category-grid");
+    const prevButton = document.getElementById("category-prev");
+    const nextButton = document.getElementById("category-next");
+    if (!categoryGrid || !prevButton || !nextButton) return;
+
+    const updateButtons = () => {
+        prevButton.disabled = categoryGrid.scrollLeft <= 0;
+        nextButton.disabled = categoryGrid.scrollLeft >= categoryGrid.scrollWidth - categoryGrid.clientWidth - 10;
+    };
+
+    prevButton.onclick = () => {
+        categoryGrid.scrollBy({ left: -520, behavior: "smooth" });
+        window.setTimeout(updateButtons, 120);
+    };
+
+    nextButton.onclick = () => {
+        categoryGrid.scrollBy({ left: 520, behavior: "smooth" });
+        window.setTimeout(updateButtons, 120);
+    };
+
+    categoryGrid.addEventListener("scroll", updateButtons);
+    updateButtons();
+}
+
+function renderFeatured(posts) {
+    const section = document.getElementById("featured");
+    const container = document.getElementById("featured-posts");
+    if (!section || !container) return;
+
+    const featuredPosts = sortPosts(posts.filter((post) => post.featured)).slice(0, 6);
+    if (!featuredPosts.length) {
+        section.style.display = "none";
+        return;
+    }
+
+    section.style.display = "";
+    container.innerHTML = featuredPosts.map((post) => `
+        <a class="featured-card" href="article.html?slug=${encodeURIComponent(post.slug)}">
+            <div class="featured-card-header">
+                <span class="featured-chip">精选</span>
+                <span class="card-meta">${escapeHtml(post.category?.name || "")}</span>
+            </div>
+            <h3>${escapeHtml(post.title || "未命名文章")}</h3>
+            <p>${escapeHtml(post.excerpt || "")}</p>
+            ${renderTagLinks(post.tags)}
+        </a>
+    `).join("");
+}
+
 function slugifyHeading(text) {
-    return text
+    return String(text || "")
         .toLowerCase()
         .trim()
         .replace(/[^\w\u4e00-\u9fa5\s-]/g, "")
         .replace(/\s+/g, "-");
+}
+
+function normalizeLanguage(language) {
+    if (!language) return "text";
+    const normalized = String(language).trim().toLowerCase();
+    const aliases = {
+        "c++": "cpp",
+        "cc": "cpp",
+        "py": "python",
+        "js": "javascript",
+        "ts": "typescript",
+        "sh": "bash",
+        "shell": "bash"
+    };
+    return aliases[normalized] || normalized;
+}
+
+function prettyLanguageLabel(language) {
+    const labels = {
+        cpp: "C++",
+        c: "C",
+        python: "Python",
+        javascript: "JavaScript",
+        typescript: "TypeScript",
+        bash: "Bash",
+        json: "JSON",
+        yaml: "YAML",
+        markdown: "Markdown",
+        text: "Text"
+    };
+    return labels[language] || language.toUpperCase();
+}
+
+function markdownToHtml(markdown, assetBase = ARTICLE_REPO_BASE) {
+    const lines = markdown.replace(/\r\n/g, "\n").split("\n");
+    const html = [];
+    let inList = false;
+    let listType = "";
+    let inCode = false;
+    let codeLanguage = "text";
+
+    const closeList = () => {
+        if (inList) {
+            html.push(`</${listType}>`);
+            inList = false;
+            listType = "";
+        }
+    };
+
+    const renderInline = (text) => escapeHtml(text)
+        .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, path) => `<img src="${resolveAssetUrl(path, assetBase)}" alt="${escapeHtml(alt)}">`)
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, path) => `<a href="${resolveAssetUrl(path, assetBase)}">${escapeHtml(label)}</a>`)
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/`([^`]+)`/g, "<code>$1</code>");
+
+    for (const rawLine of lines) {
+        const line = rawLine.trimEnd();
+
+        if (line.startsWith("```")) {
+            closeList();
+            if (!inCode) {
+                inCode = true;
+                codeLanguage = normalizeLanguage(line.slice(3).trim());
+                html.push(`<pre class="language-${codeLanguage}"><code class="language-${codeLanguage}">`);
+            } else {
+                inCode = false;
+                codeLanguage = "text";
+                html.push("</code></pre>");
+            }
+            continue;
+        }
+
+        if (inCode) {
+            html.push(`${escapeHtml(rawLine)}\n`);
+            continue;
+        }
+
+        if (!line.trim()) {
+            closeList();
+            continue;
+        }
+
+        if (line.startsWith("### ")) {
+            closeList();
+            html.push(`<h3>${renderInline(line.slice(4))}</h3>`);
+            continue;
+        }
+
+        if (line.startsWith("## ")) {
+            closeList();
+            html.push(`<h2>${renderInline(line.slice(3))}</h2>`);
+            continue;
+        }
+
+        if (line.startsWith("# ")) {
+            closeList();
+            html.push(`<h1>${renderInline(line.slice(2))}</h1>`);
+            continue;
+        }
+
+        if (/^- /.test(line)) {
+            if (!inList || listType !== "ul") {
+                closeList();
+                inList = true;
+                listType = "ul";
+                html.push("<ul>");
+            }
+            html.push(`<li>${renderInline(line.slice(2))}</li>`);
+            continue;
+        }
+
+        if (/^\d+\.\s/.test(line)) {
+            if (!inList || listType !== "ol") {
+                closeList();
+                inList = true;
+                listType = "ol";
+                html.push("<ol>");
+            }
+            html.push(`<li>${renderInline(line.replace(/^\d+\.\s/, ""))}</li>`);
+            continue;
+        }
+
+        closeList();
+        html.push(`<p>${renderInline(line)}</p>`);
+    }
+
+    closeList();
+    return html.join("");
+}
+
+function rewriteRenderedAssets(container, assetBase) {
+    container.querySelectorAll("img[src]").forEach((image) => {
+        image.src = resolveAssetUrl(image.getAttribute("src") || "", assetBase);
+    });
+
+    container.querySelectorAll("a[href]").forEach((link) => {
+        const href = link.getAttribute("href") || "";
+        if (!href || href.startsWith("#")) return;
+        const resolved = resolveAssetUrl(href, assetBase);
+        link.setAttribute("href", resolved);
+        if (/^https?:\/\//i.test(resolved)) {
+            link.setAttribute("target", "_blank");
+            link.setAttribute("rel", "noreferrer");
+        }
+    });
+}
+
+function renderMath(container) {
+    if (!window.renderMathInElement || !container) return;
+    window.renderMathInElement(container, {
+        delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "\\[", right: "\\]", display: true },
+            { left: "$", right: "$", display: false },
+            { left: "\\(", right: "\\)", display: false }
+        ],
+        throwOnError: false,
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+    });
+}
+
+function renderMarkdownArticle(markdown) {
+    const normalizedMarkdown = markdown.replace(/^\[TOC\]\s*$/gim, "").trim();
+    if (!window.marked) {
+        return markdownToHtml(normalizedMarkdown);
+    }
+
+    const renderer = new window.marked.Renderer();
+    renderer.heading = ({ tokens, depth }) => {
+        const text = (tokens || []).map((token) => token.text || "").join("").trim();
+        const id = slugifyHeading(text) || `section-${depth}`;
+        return `<h${depth} id="${id}">${window.marked.Parser.parseInline(tokens)}</h${depth}>`;
+    };
+
+    const rawHtml = window.marked.parse(normalizedMarkdown, {
+        gfm: true,
+        breaks: true,
+        headerIds: true,
+        mangle: false,
+        renderer
+    });
+
+    return window.DOMPurify ? window.DOMPurify.sanitize(rawHtml) : rawHtml;
 }
 
 function enhanceCodeBlocks(container) {
@@ -337,16 +484,18 @@ function enhanceCodeBlocks(container) {
         const pre = code.parentElement;
         if (!pre || pre.parentElement?.classList.contains("code-block")) return;
 
+        const languageClass = [...code.classList].find((item) => item.startsWith("language-"));
+        const language = languageClass ? languageClass.replace("language-", "") : "text";
+
         const wrapper = document.createElement("div");
         wrapper.className = "code-block";
 
         const toolbar = document.createElement("div");
         toolbar.className = "code-toolbar";
 
-        const language = [...code.classList].find((item) => item.startsWith("language-"))?.replace("language-", "") || "text";
         const label = document.createElement("span");
         label.className = "code-language";
-        label.textContent = language;
+        label.textContent = prettyLanguageLabel(language);
 
         const button = document.createElement("button");
         button.className = "code-copy-button";
@@ -373,16 +522,15 @@ function buildArticleOutline(container) {
     const outline = document.getElementById("article-outline");
     if (!outline) return;
 
-    // 选择 h2 和 h3 标题
     const headings = [...container.querySelectorAll("h2, h3")];
     if (!headings.length) {
-        outline.innerHTML = "<li>这篇文章暂时没有标题。</li>";
+        outline.innerHTML = "<li>这篇文章暂时没有二级或三级标题。</li>";
         return;
     }
 
     const usedIds = new Set();
     headings.forEach((heading, index) => {
-        let id = slugifyHeading(heading.textContent || "") || `section-${index + 1}`;
+        let id = heading.id || slugifyHeading(heading.textContent || "") || `section-${index + 1}`;
         while (usedIds.has(id)) {
             id = `${id}-${index + 1}`;
         }
@@ -391,57 +539,88 @@ function buildArticleOutline(container) {
     });
 
     outline.innerHTML = headings.map((heading) => {
-        const level = parseInt(heading.tagName[1]);
-        const className = `outline-level-${level}`;
-        return `<li class="${className}"><a href="#${heading.id}">${heading.textContent}</a></li>`;
+        const level = Number(heading.tagName.slice(1));
+        return `<li class="outline-level-${level}"><a href="#${heading.id}">${escapeHtml(heading.textContent || "")}</a></li>`;
     }).join("");
 }
 
-function rewriteRenderedAssets(container, assetBase) {
-    container.querySelectorAll("img[src]").forEach((image) => {
-        image.src = resolveAssetUrl(image.getAttribute("src") || "", assetBase);
+function renderArticlePagination(posts, currentIndex) {
+    const pagination = document.getElementById("article-pagination");
+    if (!pagination) return;
+
+    const newer = currentIndex > 0 ? posts[currentIndex - 1] : null;
+    const older = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
+
+    pagination.innerHTML = `
+        ${newer ? `<a class="article-nav-card" href="article.html?slug=${encodeURIComponent(newer.slug)}"><span class="article-nav-label">上一篇</span><strong>${escapeHtml(newer.title)}</strong></a>` : '<span class="article-nav-card is-empty"></span>'}
+        ${older ? `<a class="article-nav-card article-nav-card-right" href="article.html?slug=${encodeURIComponent(older.slug)}"><span class="article-nav-label">下一篇</span><strong>${escapeHtml(older.title)}</strong></a>` : '<span class="article-nav-card is-empty"></span>'}
+    `;
+}
+
+function setupBackToTop() {
+    const button = document.getElementById("back-to-top");
+    if (!button) return;
+
+    const sync = () => {
+        button.classList.toggle("is-visible", window.scrollY > 320);
+    };
+
+    button.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
-    container.querySelectorAll("a[href]").forEach((link) => {
-        const href = link.getAttribute("href") || "";
-        if (!href || href.startsWith("#")) return;
-        const resolved = resolveAssetUrl(href, assetBase);
-        link.setAttribute("href", resolved);
-        if (/^https?:\/\//i.test(resolved)) {
-            link.setAttribute("target", "_blank");
-            link.setAttribute("rel", "noreferrer");
+    window.addEventListener("scroll", sync, { passive: true });
+    sync();
+}
+
+async function incrementViewCount(slug) {
+    const localKey = `plwy:view:${slug}`;
+    try {
+        const response = await fetch(`https://api.countapi.xyz/hit/${encodeURIComponent(VIEW_COUNTER_NAMESPACE)}/${encodeURIComponent(slug)}`, {
+            cache: "no-store"
+        });
+        if (!response.ok) throw new Error("remote counter failed");
+        const payload = await response.json();
+        return Number(payload.value || 0);
+    } catch {
+        const next = Number(localStorage.getItem(localKey) || "0") + 1;
+        localStorage.setItem(localKey, String(next));
+        return next;
+    }
+}
+
+function renderShareActions(post, articleUrl) {
+    const container = document.getElementById("share-actions");
+    if (!container) return;
+
+    const text = encodeURIComponent(`${post.title} | 侧耳倾听`);
+    const url = encodeURIComponent(articleUrl);
+    const actions = [
+        { label: "微博", href: `https://service.weibo.com/share/share.php?title=${text}&url=${url}` },
+        { label: "X", href: `https://twitter.com/intent/tweet?text=${text}&url=${url}` },
+        { label: "Telegram", href: `https://t.me/share/url?url=${url}&text=${text}` },
+        { label: "LinkedIn", href: `https://www.linkedin.com/sharing/share-offsite/?url=${url}` }
+    ];
+
+    container.innerHTML = actions.map((action) => `
+        <a class="share-button" href="${action.href}" target="_blank" rel="noreferrer">${action.label}</a>
+    `).join("") + '<button class="share-button share-button-copy" id="copy-article-link" type="button">复制链接</button>';
+
+    const copyButton = document.getElementById("copy-article-link");
+    copyButton?.addEventListener("click", async () => {
+        try {
+            await navigator.clipboard.writeText(articleUrl);
+            copyButton.textContent = "已复制";
+            window.setTimeout(() => { copyButton.textContent = "复制链接"; }, 1400);
+        } catch {
+            copyButton.textContent = "复制失败";
+            window.setTimeout(() => { copyButton.textContent = "复制链接"; }, 1400);
         }
     });
 }
 
-function renderMarkdownArticle(markdown, assetBase) {
-    const normalizedMarkdown = markdown.replace(/^\[TOC\]\s*$/gim, '').trim();
-    if (!window.marked) {
-        return markdownToHtml(normalizedMarkdown, assetBase);
-    }
-
-    const renderer = new window.marked.Renderer();
-    renderer.heading = ({ tokens, depth }) => {
-        const text = (tokens || []).map((token) => token.text || "").join("").trim();
-        const id = slugifyHeading(text) || `section-${depth}`;
-        return `<h${depth} id="${id}">${window.marked.Parser.parseInline(tokens)}</h${depth}>`;
-    };
-
-    const rawHtml = window.marked.parse(normalizedMarkdown, {
-        gfm: true,
-        breaks: true,
-        headerIds: true,
-        mangle: false,
-        renderer
-    });
-
-    return window.DOMPurify ? window.DOMPurify.sanitize(rawHtml) : rawHtml;
-}
-
 function renderHome(posts, categories) {
     const categoryGrid = document.getElementById("category-grid");
-    const categoryPrevBtn = document.getElementById("category-prev");
-    const categoryNextBtn = document.getElementById("category-next");
     const latestPosts = document.getElementById("latest-posts");
     const tagTabs = document.getElementById("home-tag-tabs");
     const pagination = document.getElementById("home-pagination");
@@ -450,28 +629,7 @@ function renderHome(posts, categories) {
     let activeTag = "all";
     let currentPage = 1;
 
-    const setupCategoryScroll = () => {
-        if (!categoryGrid || !categoryPrevBtn || !categoryNextBtn) return;
-        const scrollAmount = 520; // 约2列的宽度 (250px + gap) * 2
-        
-        const updateButtonState = () => {
-            categoryPrevBtn.disabled = categoryGrid.scrollLeft <= 0;
-            categoryNextBtn.disabled = categoryGrid.scrollLeft >= categoryGrid.scrollWidth - categoryGrid.clientWidth - 10;
-        };
-
-        categoryPrevBtn.addEventListener("click", () => {
-            categoryGrid.scrollBy({ left: -scrollAmount, behavior: "smooth" });
-            setTimeout(updateButtonState, 100);
-        });
-
-        categoryNextBtn.addEventListener("click", () => {
-            categoryGrid.scrollBy({ left: scrollAmount, behavior: "smooth" });
-            setTimeout(updateButtonState, 100);
-        });
-
-        categoryGrid.addEventListener("scroll", updateButtonState);
-        updateButtonState();
-    };
+    renderFeatured(allPosts);
 
     const renderFiltered = (query) => {
         const filteredCategories = allCategories.filter((category) => matchesCategory(category, query));
@@ -480,25 +638,29 @@ function renderHome(posts, categories) {
         if (activeTag !== "all" && !tags.includes(activeTag)) {
             activeTag = "all";
         }
-        const filteredPosts = activeTag === "all" ? queryPosts : queryPosts.filter((post) => (post.tags || []).includes(activeTag));
+
+        const filteredPosts = activeTag === "all"
+            ? queryPosts
+            : queryPosts.filter((post) => (post.tags || []).includes(activeTag));
         const paged = paginatePosts(filteredPosts, currentPage, HOME_PAGE_SIZE);
         currentPage = paged.page;
 
-        categoryGrid.innerHTML = filteredCategories.length
-            ? filteredCategories.map((category) => `
-                <a class="category-card" href="category.html?slug=${category.slug}">
-                    <div class="category-icon">${category.icon || "·"}</div>
-                    <h3>${category.name}</h3>
-                    <p>${category.description || ""}</p>
-                    <p class="card-meta">${category.count} 篇文章</p>
-                </a>
-            `).join("")
-            : '<div class="empty-state">没有匹配到分类结果。</div>';
+        if (categoryGrid) {
+            categoryGrid.innerHTML = filteredCategories.length
+                ? filteredCategories.map((category) => `
+                    <a class="category-card" href="category.html?slug=${encodeURIComponent(category.slug)}">
+                        <div class="category-icon">${escapeHtml(category.icon || "·")}</div>
+                        <h3>${escapeHtml(category.name)}</h3>
+                        <p>${escapeHtml(category.description || "")}</p>
+                        <p class="card-meta">${category.count} 篇文章</p>
+                    </a>
+                `).join("")
+                : '<div class="empty-state">没有匹配到分类结果。</div>';
+            setupCategoryScroll();
+        }
 
-        setupCategoryScroll();
         renderTagTabs(tagTabs, tags, activeTag);
         renderPager(pagination, paged.page, paged.totalPages);
-
         latestPosts.innerHTML = filteredPosts.length
             ? renderPostList(paged.items)
             : '<div class="empty-state">没有匹配到文章结果。</div>';
@@ -538,8 +700,8 @@ function renderCategory(posts, categories) {
     let currentPage = 1;
 
     if (!category) {
-        title.textContent = "未找到这个分类";
-        list.innerHTML = '<div class="empty-state">这个分类暂时没有文章。</div>';
+        if (title) title.textContent = "未找到这个分类";
+        if (list) list.innerHTML = '<div class="empty-state">这个分类暂时没有文章。</div>';
         updateSeoMeta({
             title: "未找到分类 | 侧耳倾听",
             description: "未找到对应的分类页面。",
@@ -548,8 +710,8 @@ function renderCategory(posts, categories) {
         return;
     }
 
-    title.textContent = category.name;
-    breadcrumb.textContent = category.name;
+    if (title) title.textContent = category.name;
+    if (breadcrumb) breadcrumb.textContent = category.name;
     updateSeoMeta({
         title: `${category.name} | 侧耳倾听`,
         description: category.description || `查看 ${category.name} 分类下的文章列表。`,
@@ -562,13 +724,14 @@ function renderCategory(posts, categories) {
         if (activeTag !== "all" && !tags.includes(activeTag)) {
             activeTag = "all";
         }
-        const filtered = activeTag === "all" ? queryPosts : queryPosts.filter((post) => (post.tags || []).includes(activeTag));
+        const filtered = activeTag === "all"
+            ? queryPosts
+            : queryPosts.filter((post) => (post.tags || []).includes(activeTag));
         const paged = paginatePosts(filtered, currentPage, CATEGORY_PAGE_SIZE);
         currentPage = paged.page;
 
         renderTagTabs(tagTabs, tags, activeTag);
         renderPager(pagination, paged.page, paged.totalPages);
-
         list.innerHTML = filtered.length
             ? renderPostList(paged.items)
             : '<div class="empty-state">这个分类下没有匹配到文章。</div>';
@@ -595,17 +758,61 @@ function renderCategory(posts, categories) {
     });
 }
 
-function renderArticlePagination(posts, currentIndex) {
-    const pagination = document.getElementById("article-pagination");
-    if (!pagination) return;
+function renderTag(posts) {
+    const tag = getQueryParam("tag");
+    const title = document.getElementById("tag-title");
+    const breadcrumb = document.getElementById("tag-breadcrumb");
+    const list = document.getElementById("tag-posts");
+    const searchInput = document.getElementById("tag-search");
+    const pagination = document.getElementById("tag-pagination");
 
-    const newer = currentIndex > 0 ? posts[currentIndex - 1] : null;
-    const older = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
+    if (!tag) {
+        if (title) title.textContent = "未指定标签";
+        if (list) list.innerHTML = '<div class="empty-state">请指定要查看的标签。</div>';
+        updateSeoMeta({
+            title: "标签 | 侧耳倾听",
+            description: "查看标签下的文章列表。",
+            url: window.location.href
+        });
+        return;
+    }
 
-    pagination.innerHTML = `
-        ${newer ? `<a class="article-nav-card" href="article.html?slug=${newer.slug}"><span class="article-nav-label">上一篇</span><strong>${newer.title}</strong></a>` : '<span class="article-nav-card is-empty"></span>'}
-        ${older ? `<a class="article-nav-card article-nav-card-right" href="article.html?slug=${older.slug}"><span class="article-nav-label">下一篇</span><strong>${older.title}</strong></a>` : '<span class="article-nav-card is-empty"></span>'}
-    `;
+    const taggedPosts = sortPosts(posts.filter((post) => (post.tags || []).includes(tag)));
+    if (title) title.textContent = `#${tag}`;
+    if (breadcrumb) breadcrumb.textContent = `#${tag}`;
+
+    updateSeoMeta({
+        title: `#${tag} | 侧耳倾听`,
+        description: `查看标签“${tag}”下的 ${taggedPosts.length} 篇文章。`,
+        url: window.location.href
+    });
+
+    let currentPage = 1;
+
+    const renderFiltered = (query) => {
+        const queryPosts = taggedPosts.filter((post) => matchesPost(post, query));
+        const paged = paginatePosts(queryPosts, currentPage, CATEGORY_PAGE_SIZE);
+        currentPage = paged.page;
+
+        if (list) {
+            list.innerHTML = queryPosts.length
+                ? renderPostList(paged.items)
+                : '<div class="empty-state">这个标签下没有匹配到文章。</div>';
+        }
+        renderPager(pagination, paged.page, paged.totalPages);
+    };
+
+    pagination?.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-page]");
+        if (!button || button.disabled) return;
+        currentPage = Number(button.dataset.page || "1");
+        renderFiltered(searchInput?.value.trim().toLowerCase() || "");
+    });
+
+    setupSearch("tag-search", (query) => {
+        currentPage = 1;
+        renderFiltered(query);
+    });
 }
 
 async function renderArticle(posts) {
@@ -615,9 +822,9 @@ async function renderArticle(posts) {
     const post = currentIndex >= 0 ? orderedPosts[currentIndex] : null;
     const body = document.getElementById("article-body");
 
-    if (!post) {
+    if (!post || !body) {
         document.getElementById("article-title").textContent = "未找到这篇文章";
-        body.innerHTML = "<p>可以返回首页重新选择文章。</p>";
+        if (body) body.innerHTML = "<p>可以返回首页重新选择文章。</p>";
         updateSeoMeta({
             title: "未找到文章 | 侧耳倾听",
             description: "未找到对应的文章内容。",
@@ -632,38 +839,52 @@ async function renderArticle(posts) {
     document.getElementById("article-meta").textContent = `${post.date} · ${post.category.name}`;
 
     const categoryLink = document.getElementById("article-category-link");
-    categoryLink.textContent = post.category.name;
-    categoryLink.href = `category.html?slug=${post.category.slug}`;
+    if (categoryLink) {
+        categoryLink.textContent = post.category.name;
+        categoryLink.href = `category.html?slug=${encodeURIComponent(post.category.slug)}`;
+    }
 
-    // 文章信息栏
-    document.getElementById("article-info").innerHTML = `
-        <li>分类：${post.category.name}</li>
-        <li>日期：${post.date}</li>
-        <li>标签：${post.tags?.length ? post.tags.map(tag => `<a href="tag.html?tag=${encodeURIComponent(tag)}" class="tag-link">${tag}</a>`).join(" / ") : "未设置"}</li>
-    `;
+    const articleUrl = `${getPublicBaseUrl()}/article.html?slug=${encodeURIComponent(post.slug)}`;
+    const articleUrlElement = document.getElementById("article-url");
+    if (articleUrlElement) {
+        articleUrlElement.href = articleUrl;
+        articleUrlElement.textContent = articleUrl;
+    }
 
-    // 最新文章列表（右侧第二栏）
+    const articleInfo = document.getElementById("article-info");
+    if (articleInfo) {
+        articleInfo.innerHTML = `
+            <li>分类：${escapeHtml(post.category.name)}</li>
+            <li>日期：${escapeHtml(post.date || "")}</li>
+            <li>标签：${renderInlineTagLinks(post.tags)}</li>
+            <li>精选：${post.featured ? "是" : "否"}</li>
+        `;
+    }
+
+    const tagsFooter = document.getElementById("article-tags-footer");
+    if (tagsFooter) {
+        tagsFooter.innerHTML = post.tags?.length
+            ? `<div class="article-tags-title">标签</div>${renderTagLinks(post.tags)}`
+            : "";
+    }
+
     const latestPostsMini = document.getElementById("latest-posts-mini");
     if (latestPostsMini) {
-        const latestFive = orderedPosts.slice(0, SIDEBAR_LATEST_COUNT);
-        latestPostsMini.innerHTML = latestFive.map((item) => `
-            <li><a href="article.html?slug=${item.slug}">${item.title}</a></li>
+        latestPostsMini.innerHTML = orderedPosts.slice(0, SIDEBAR_LATEST_COUNT).map((item) => `
+            <li><a href="article.html?slug=${encodeURIComponent(item.slug)}">${escapeHtml(item.title)}</a></li>
         `).join("");
     }
 
-    // 继续阅读 - 同分类文章（右侧第三栏）
-    const related = orderedPosts
+    const relatedPosts = orderedPosts
         .filter((item) => item.category.slug === post.category.slug && item.slug !== post.slug)
         .slice(0, 5);
-
     const relatedContainer = document.getElementById("related-posts");
     if (relatedContainer) {
-        relatedContainer.innerHTML = related.length
-            ? related.map((item) => `<li><a href="article.html?slug=${item.slug}">${item.title}</a></li>`).join("")
+        relatedContainer.innerHTML = relatedPosts.length
+            ? relatedPosts.map((item) => `<li><a href="article.html?slug=${encodeURIComponent(item.slug)}">${escapeHtml(item.title)}</a></li>`).join("")
             : "<li>这个分类下暂时没有更多文章。</li>";
     }
 
-    // 加载 Markdown 正文
     const response = await fetch(`${ARTICLE_REPO_BASE}/${post.markdown}?v=${CACHE_BUSTER}`, { cache: "no-store" });
     if (!response.ok) {
         body.innerHTML = "<p>Markdown 正文读取失败。</p>";
@@ -672,32 +893,23 @@ async function renderArticle(posts) {
 
     const markdown = await response.text();
     const markdownBase = `${ARTICLE_REPO_BASE}/${post.markdown.substring(0, post.markdown.lastIndexOf("/"))}`;
-    body.innerHTML = renderMarkdownArticle(markdown, markdownBase);
+    body.innerHTML = renderMarkdownArticle(markdown);
     rewriteRenderedAssets(body, markdownBase);
-
-    // 构建大纲（只包含 h2）
-    buildArticleOutline(body);
+    renderMath(body);
     enhanceCodeBlocks(body);
-
     if (window.Prism?.highlightAllUnder) {
         window.Prism.highlightAllUnder(body);
     }
-
-    // 上下篇导航
+    buildArticleOutline(body);
     renderArticlePagination(orderedPosts, currentIndex);
+    renderShareActions(post, articleUrl);
 
-    // 设置文章链接
-    const articleUrlElement = document.getElementById("article-url");
-    if (articleUrlElement) {
-        // 本地测试时使用公网链接，部署后使用当前域名
-        const isLocal = window.location.protocol === "file:";
-        const baseUrl = isLocal ? "https://plwy.github.io" : window.location.origin;
-        const articleUrl = `${baseUrl}/article.html?slug=${post.slug}`;
-        articleUrlElement.href = articleUrl;
-        articleUrlElement.textContent = articleUrl;
+    const viewCount = await incrementViewCount(post.slug);
+    const viewCountElement = document.getElementById("article-view-count");
+    if (viewCountElement) {
+        viewCountElement.textContent = String(viewCount);
     }
 
-    // 更新 SEO
     updateSeoMeta({
         title: `${post.title} | 侧耳倾听`,
         description: post.excerpt || `阅读 ${post.title}`,
@@ -706,71 +918,15 @@ async function renderArticle(posts) {
     });
 }
 
-function renderTag(posts) {
-    const tag = getQueryParam("tag");
-    const title = document.getElementById("tag-title");
-    const breadcrumb = document.getElementById("tag-breadcrumb");
-    const list = document.getElementById("tag-posts");
-    const tagSearch = document.getElementById("tag-search");
-    const pagination = document.getElementById("tag-pagination");
-
-    if (!tag) {
-        title.textContent = "未指定标签";
-        list.innerHTML = '<div class="empty-state">请指定要查看的标签。</div>';
-        updateSeoMeta({
-            title: "标签 | 侧耳倾听",
-            description: "查看标签下的文章列表。",
-            url: window.location.href
-        });
-        return;
-    }
-
-    const taggedPosts = sortPosts(posts.filter((post) => (post.tags || []).includes(tag)));
-    title.textContent = `#${tag}`;
-    breadcrumb.textContent = `#${tag}`;
-
-    updateSeoMeta({
-        title: `#${tag} | 侧耳倾听`,
-        description: `查看标签"${tag}"下的 ${taggedPosts.length} 篇文章。`,
-        url: window.location.href
-    });
-
-    let currentPage = 1;
-
-    const renderFiltered = (query) => {
-        const queryPosts = taggedPosts.filter((post) => matchesPost(post, query));
-        const paged = paginatePosts(queryPosts, currentPage, CATEGORY_PAGE_SIZE);
-        currentPage = paged.page;
-
-        list.innerHTML = queryPosts.length
-            ? renderPostList(paged.items)
-            : '<div class="empty-state">这个标签下没有匹配到文章。</div>';
-
-        renderPager(pagination, paged.page, paged.totalPages);
-    };
-
-    pagination?.addEventListener("click", (event) => {
-        const button = event.target.closest("[data-page]");
-        if (!button || button.disabled) return;
-        currentPage = Number(button.dataset.page || "1");
-        renderFiltered(tagSearch?.value.trim().toLowerCase() || "");
-    });
-
-    setupSearch("tag-search", (query) => {
-        currentPage = 1;
-        renderFiltered(query);
-    });
-}
-
 async function init() {
     setupThemeToggle();
+    setupBackToTop();
 
     try {
         const page = document.body.dataset.page;
         if (!page) return;
 
         const { posts, categories } = await loadSiteData();
-
         if (page === "home") renderHome(posts, categories);
         if (page === "category") renderCategory(posts, categories);
         if (page === "tag") renderTag(posts);
@@ -778,7 +934,7 @@ async function init() {
     } catch (error) {
         const fallback = document.createElement("div");
         fallback.className = "container";
-        fallback.innerHTML = `<div class="empty-state">${error.message}</div>`;
+        fallback.innerHTML = `<div class="empty-state">${escapeHtml(error.message || "页面加载失败。")}</div>`;
         document.body.appendChild(fallback);
     }
 }
