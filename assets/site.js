@@ -194,9 +194,19 @@ function renderPostList(posts) {
     return posts.map((post) => `
         <a class="post-card" href="article.html?slug=${encodeURIComponent(post.slug)}">
             <div class="card-meta">${escapeHtml(post.date || "")} · ${escapeHtml(post.category?.name || "")}</div>
-            <h3>${escapeHtml(post.title || "未命名文章")}${post.featured ? '<span class="featured-badge">精品</span>' : ""}</h3>
+            <h3>${escapeHtml(post.title || "未命名文章")}${post.featured ? '<span class="featured-badge">置顶</span>' : ""}</h3>
             <p>${escapeHtml(post.excerpt || "")}</p>
             ${renderTagLinks(post.tags)}
+        </a>
+    `).join("");
+}
+
+function renderPinnedPostList(posts) {
+    return posts.map((post) => `
+        <a class="post-card" href="article.html?slug=${encodeURIComponent(post.slug)}">
+            <div class="card-meta">${escapeHtml(post.date || "")} · ${escapeHtml(post.category?.name || "")}</div>
+            <h3>${escapeHtml(post.title || "未命名文章")}<span class="featured-badge">置顶</span></h3>
+            <p>${escapeHtml(post.excerpt || "")}</p>
         </a>
     `).join("");
 }
@@ -274,7 +284,7 @@ function renderFeatured(posts) {
     }
 
     section.style.display = "";
-    container.innerHTML = renderPostList(featuredPosts);
+    container.innerHTML = renderPinnedPostList(featuredPosts);
 }
 
 function slugifyHeading(text) {
