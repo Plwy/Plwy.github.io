@@ -760,6 +760,16 @@ a { color: inherit; }
     border-top: 1px solid var(--border);
     padding-top: 10px;
     margin-top: 6px;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+#article-url {
+    display: inline-block;
+    max-width: 100%;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .article-tags-footer {
