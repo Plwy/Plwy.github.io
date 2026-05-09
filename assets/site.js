@@ -652,7 +652,6 @@ function renderHome(posts, categories) {
                     <a class="category-card" href="category.html?slug=${encodeURIComponent(category.slug)}">
                         <div class="category-icon">${escapeHtml(category.icon || "·")}</div>
                         <h3>${escapeHtml(category.name)}</h3>
-                        <p>${escapeHtml(category.description || "")}</p>
                         <p class="card-meta">${category.count} 篇文章</p>
                     </a>
                 `).join("")
