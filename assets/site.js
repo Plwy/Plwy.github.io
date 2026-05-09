@@ -1,4 +1,4 @@
-const CACHE_BUSTER = "20260509a";
+const CACHE_BUSTER = "20260510a";
 const ARTICLE_REPO_BASE = "https://raw.githubusercontent.com/Plwy/plwy-articles/main";
 const DEFAULT_OG_IMAGE = "https://plwy.github.io/images/hero-bg.jpg";
 const HOME_PAGE_SIZE = 8;
