@@ -192,7 +192,11 @@ a { color: inherit; }
 .section-title { text-align: center; margin-bottom: 32px; }
 .section-title-left { text-align: left; }
 .section-title h2 { font-size: 2.2rem; color: var(--brand); margin-bottom: 15px; }
-.section-title p, .breadcrumb { color: var(--text-muted); }
+.section-title p, .breadcrumb {
+    color: var(--text-muted);
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
 .breadcrumb a { color: var(--brand); text-decoration: none; }
 
 /* ========== Search & Tags ========== */
@@ -499,7 +503,12 @@ a { color: inherit; }
     overflow-wrap: anywhere;
     word-break: break-word;
 }
-.post-meta { color: var(--text-muted); font-size: 0.95rem; }
+.post-meta {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
 .article-body h1, .article-body h2, .article-body h3 {
     color: var(--text);
     margin: 1.4em 0 0.8em;
@@ -580,22 +589,41 @@ a { color: inherit; }
 }
 
 /* ========== Sidebar ========== */
-.sidebar { position: sticky; top: 96px; }
-.sidebar-section { padding: 28px; margin-bottom: 20px; }
+.sidebar {
+    position: sticky;
+    top: 96px;
+    min-width: 0;
+}
+.sidebar-section {
+    padding: 28px;
+    margin-bottom: 20px;
+    min-width: 0;
+}
 .sidebar-section h3 {
     color: var(--brand);
     margin-bottom: 14px;
     padding-bottom: 10px;
     border-bottom: 2px solid var(--brand-soft);
 }
-.sidebar-list { list-style: none; }
+.sidebar-list {
+    list-style: none;
+    min-width: 0;
+}
 .sidebar-list li {
     padding: 7px 0;
     border-bottom: 1px solid var(--border);
     color: var(--text-soft);
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 .sidebar-list li:last-child { border-bottom: none; }
-.sidebar-list a { color: var(--brand); text-decoration: none; }
+.sidebar-list a {
+    color: var(--brand);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
 .tag-link {
     display: inline-block;
     background: var(--surface-2);
@@ -609,7 +637,12 @@ a { color: inherit; }
     background: var(--brand-soft);
     color: var(--text);
 }
-.outline-list a { display: block; padding: 3px 0; }
+.outline-list a {
+    display: block;
+    padding: 3px 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
 
 /* 左侧大纲 - 显示 h2 和 h3 */
 .outline-list {
@@ -822,6 +855,9 @@ a { color: inherit; }
 .article-share-meta {
     color: var(--text-soft);
     font-size: 0.95rem;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .article-view-badge {
@@ -831,6 +867,10 @@ a { color: inherit; }
     padding: 0.5rem 0.8rem;
     border-radius: 999px;
     background: var(--surface-2);
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .share-actions {
@@ -1080,8 +1120,14 @@ code[class*="language-"] {
     text-decoration: none;
     background: var(--surface-2);
     border: 1px solid var(--border);
+    min-width: 0;
 }
-.article-nav-card strong { display: block; color: var(--text); }
+.article-nav-card strong {
+    display: block;
+    color: var(--text);
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
 .article-nav-card-right { text-align: right; }
 .article-nav-label {
     display: block;
