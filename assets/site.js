@@ -190,14 +190,12 @@ function renderInlineTagLinks(tags) {
     return tags.map((tag) => `<a class="tag-link" href="tag.html?tag=${encodeURIComponent(tag)}">${escapeHtml(tag)}</a>`).join(" ");
 }
 
-function renderPostList(posts, options = {}) {
-    const { showTags = true } = options;
+function renderPostList(posts) {
     return posts.map((post) => `
         <a class="post-card" href="article.html?slug=${encodeURIComponent(post.slug)}">
             <div class="card-meta">${escapeHtml(post.date || "")} · ${escapeHtml(post.category?.name || "")}</div>
             <h3>${escapeHtml(post.title || "未命名文章")}${post.featured ? '<span class="featured-badge">置顶</span>' : ""}</h3>
             <p>${escapeHtml(post.excerpt || "")}</p>
-            ${showTags ? renderTagLinks(post.tags) : ""}
         </a>
     `).join("");
 }
@@ -799,7 +797,7 @@ function renderTag(posts) {
 
         if (list) {
             list.innerHTML = queryPosts.length
-                ? renderPostList(paged.items, { showTags: false })
+                ? renderPostList(paged.items)
                 : '<div class="empty-state">这个标签下没有匹配到文章。</div>';
         }
         renderPager(pagination, paged.page, paged.totalPages);
