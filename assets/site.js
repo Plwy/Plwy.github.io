@@ -274,17 +274,7 @@ function renderFeatured(posts) {
     }
 
     section.style.display = "";
-    container.innerHTML = featuredPosts.map((post) => `
-        <a class="featured-card" href="article.html?slug=${encodeURIComponent(post.slug)}">
-            <div class="featured-card-header">
-                <span class="featured-chip">精选</span>
-                <span class="card-meta">${escapeHtml(post.category?.name || "")}</span>
-            </div>
-            <h3>${escapeHtml(post.title || "未命名文章")}</h3>
-            <p>${escapeHtml(post.excerpt || "")}</p>
-            ${renderTagLinks(post.tags)}
-        </a>
-    `).join("");
+    container.innerHTML = renderPostList(featuredPosts);
 }
 
 function slugifyHeading(text) {
@@ -300,12 +290,12 @@ function normalizeLanguage(language) {
     const normalized = String(language).trim().toLowerCase();
     const aliases = {
         "c++": "cpp",
-        "cc": "cpp",
-        "py": "python",
-        "js": "javascript",
-        "ts": "typescript",
-        "sh": "bash",
-        "shell": "bash"
+        cc: "cpp",
+        py: "python",
+        js: "javascript",
+        ts: "typescript",
+        sh: "bash",
+        shell: "bash"
     };
     return aliases[normalized] || normalized;
 }
@@ -596,25 +586,27 @@ function renderShareActions(post, articleUrl) {
     const text = encodeURIComponent(`${post.title} | 侧耳倾听`);
     const url = encodeURIComponent(articleUrl);
     const actions = [
-        { label: "微博", href: `https://service.weibo.com/share/share.php?title=${text}&url=${url}` },
-        { label: "X", href: `https://twitter.com/intent/tweet?text=${text}&url=${url}` },
-        { label: "Telegram", href: `https://t.me/share/url?url=${url}&text=${text}` },
-        { label: "LinkedIn", href: `https://www.linkedin.com/sharing/share-offsite/?url=${url}` }
+        { label: "微博", icon: "微", className: "is-weibo", href: `https://service.weibo.com/share/share.php?title=${text}&url=${url}` },
+        { label: "X", icon: "𝕏", className: "is-x", href: `https://twitter.com/intent/tweet?text=${text}&url=${url}` },
+        { label: "Telegram", icon: "✈", className: "is-telegram", href: `https://t.me/share/url?url=${url}&text=${text}` },
+        { label: "LinkedIn", icon: "in", className: "is-linkedin", href: `https://www.linkedin.com/sharing/share-offsite/?url=${url}` }
     ];
 
     container.innerHTML = actions.map((action) => `
-        <a class="share-button" href="${action.href}" target="_blank" rel="noreferrer">${action.label}</a>
-    `).join("") + '<button class="share-button share-button-copy" id="copy-article-link" type="button">复制链接</button>';
+        <a class="share-button ${action.className}" href="${action.href}" target="_blank" rel="noreferrer" aria-label="${action.label}" title="${action.label}">
+            <span class="share-icon">${action.icon}</span>
+        </a>
+    `).join("") + '<button class="share-button share-button-copy" id="copy-article-link" type="button" aria-label="复制链接" title="复制链接"><span class="share-icon">⧉</span></button>';
 
     const copyButton = document.getElementById("copy-article-link");
     copyButton?.addEventListener("click", async () => {
         try {
             await navigator.clipboard.writeText(articleUrl);
-            copyButton.textContent = "已复制";
-            window.setTimeout(() => { copyButton.textContent = "复制链接"; }, 1400);
+            copyButton.innerHTML = '<span class="share-icon">✓</span>';
+            window.setTimeout(() => { copyButton.innerHTML = '<span class="share-icon">⧉</span>'; }, 1400);
         } catch {
-            copyButton.textContent = "复制失败";
-            window.setTimeout(() => { copyButton.textContent = "复制链接"; }, 1400);
+            copyButton.innerHTML = '<span class="share-icon">!</span>';
+            window.setTimeout(() => { copyButton.innerHTML = '<span class="share-icon">⧉</span>'; }, 1400);
         }
     });
 }
